@@ -67,7 +67,7 @@ class OpenBCIBoard(object):
   """
 
   def __init__(self, port=None, baud=115200, filter_data=True,
-    scaled_output=True, daisy=False, log=True, timeout=None):
+    scaled_output=True, daisy=True, log=True, timeout=None):
     self.log = log # print_incoming_text needs log
     if not port:
       port = find_port()
@@ -159,6 +159,7 @@ class OpenBCIBoard(object):
             call(whole_sample)
       else:
         for call in callback:
+          print('call', call)
           call(sample)
       
       if(lapse > 0 and timeit.default_timer() - start_time > lapse):
