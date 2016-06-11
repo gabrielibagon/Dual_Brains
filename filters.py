@@ -1,10 +1,33 @@
 from collections import deque
+import numpy as np
+from scipy import signal, fft
+import filter_controls
+from pyqtgraph.Qt import QtGui, QtCore
+from PyQt4.QtCore import QThread, pyqtSignal, pyqtSlot, SIGNAL #PyQt version 4.11.4
+import sys
 
-class Filters():
+class Filters(QtGui.QMainWindow, filter_controls.Ui_MainWindow):
 	def __init__(self):
 		self.fs_Hz = 250
 		self.data_buff = deque([])
 		self.filtered_data = []
+
+		# Filtering Booleans
+		self.NOTCH = True
+		self.BANDPASS = True
+		self.WINDOW = True
+		self.FFT = True
+
+		app = QtGui.QApplication(sys.argv)  		# new instance of QApplication
+		super(self.__class__,self).__init__()
+		self.setupUi(self)
+
+		print(self.radioButton.isChecked())
+
+		self.show()
+		
+		sys.exit(app.exec_())
+
 
 	def data_receive(self,sample):
 		if len(self.data_buff) < 250:
@@ -13,28 +36,30 @@ class Filters():
 			self.filter_control(self.data_buff)
 			self.data_buff.pop()
 			self.data_buff.append(sample)
+		if (self.radioButton.isChecked()):
+			print('change!!!!')
 
 	def filter_control(self,data_buff):
 		data = self.data_buff
-		if NOTCH is True:
+		if self.NOTCH is True:
 			# NOTCH Filter
 			# 
 			# Optional arguments:
 			# 		notch_Hz = 60
 			#
-			data = self.notch(data)
+			data = self.notch_filter(data)
 
-		if BANDPASS is True:
-			data = self.bandpass(data)
-		if WINDOW is True:
-			data = self.window(data)
-		if FFT is True:
-			fft = self.fft(self.data_buff)
+		if self.BANDPASS is True:
+			data = self.bandpass_filter(data, 1., 50.)
+		if self.WINDOW is True:
+			data = self.window_filter(data)
+		if self.FFT is True:
+			fft = self.fft_filter(self.data_buff)
 
 	def notch_filter(self,data,notch_Hz=60):
-		processed_data = np.empty([8,250])
+		processed_data = np.empty([250,16])
 		low_freq = float(notch_Hz - 1.0)
-		high_freq = float(notch_Hz + 1.0)]
+		high_freq = float(notch_Hz + 1.0)
 		notch_Hz = np.array([low_freq, high_freq])			#empty array for filter kernel
 		b, a = signal.butter(2,notch_Hz/(self.fs_Hz / 2.0), 'bandstop') #set up filter
 		for i,channel in enumerate(data):
