@@ -234,7 +234,6 @@ class OpenBCIBoard(object):
             channel_data.append(myInt*scale_fac_uVolts_per_count)
           else:
             channel_data.append(myInt)
-          print('MY INT', myInt*scale_fac_uVolts_per_count)
         self.read_state = 2;  
 
       #---------Accelerometer Data---------
