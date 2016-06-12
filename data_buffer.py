@@ -1,10 +1,11 @@
 import open_bci_v3
 import time
 import filters
+import tkinter
 
 class Data_Buffer():
 
-	def __init__(self):
+	def __init__(self, root):
 
 		#instantiate EEG and ECG lists for subj1 and subj2
 		self.subj1_EEG = []
@@ -15,6 +16,8 @@ class Data_Buffer():
 		self.data_buffer = [] #this will hold the raw data
 		self.fs_Hz = 250	#frequency in Hertz
 		self.FIRST_BUFFER = True
+
+		self.root = root
 
 	def buffer(self,sample):
 		if sample:
@@ -28,14 +31,15 @@ class Data_Buffer():
 			# subject 2
 			self.subj2_EEG.append(sample.channel_data[8:14])
 			self.subj2_ECG.append(sample.channel_data[14:17])
-
-			filt.data_receive(sample.channel_data)
+			print('huh')
+			filt.data_receive(sample.channel_data, self.root)
 
 def main():
 	port = '/dev/ttyUSB0'
-	db = Data_Buffer()
+	root = tkinter.Tk()
+	db = Data_Buffer(root)
 	global filt
-	filt = filters.Filters()
+	filt = filters.Filters(root)
 	board = open_bci_v3.OpenBCIBoard(port=port)
 	board.start_streaming(db.buffer)
 
