@@ -1,9 +1,8 @@
 from collections import deque
 import numpy as np
 from scipy import signal, fft
-import filter_controls
 import sys
-import tkinter
+import tkinter as tk
 import time
 
 class Filters:
@@ -12,70 +11,122 @@ class Filters:
 		self.data_buff = deque([])
 		self.filtered_data = []
 
-		# Filtering Booleans
-		self.NOTCH = tkinter.IntVar()
-		self.BANDPASS = tkinter.IntVar()
-		self.WINDOW = tkinter.IntVar()
-		self.FFT = tkinter.IntVar()
+		# Filtering Variables
+		# notch variables
+		self.NOTCH = tk.IntVar()
+		self.notch_freq = tk.IntVar()
 
-		# Set up Filter Control GUI
+
+		self.BANDPASS = tk.IntVar()
+		self.bp_low_freq = tk.IntVar()
+		self.bp_high_freq = tk.IntVar()
+
+		self.WINDOW = tk.IntVar()
+		self.FFT = tk.IntVar()
+
+		######################################################################
+		# FILTER CONTROL GUI
+		#
 		self.master = master
 		master.title("Filter Control")
-		notch_button = tkinter.Checkbutton(master, text="Notch Filter", variable=self.NOTCH).grid(row=0,sticky=tkinter.W)
-		bandpass_button = tkinter.Checkbutton(master, text="Bandpass", variable=self.BANDPASS).grid(row=1,sticky=tkinter.W)
-		window_button = tkinter.Checkbutton(master, text="Window Filter", variable=self.WINDOW).grid(row=2,sticky=tkinter.W)
+		
+		############################
+		# NOTCH SETUP
 
+		# button
+		tk.Checkbutton(master, text="Notch Filter",pady=10,variable=self.NOTCH,
+				).grid(row=0,sticky=tk.W)
+		# entry
+		tk.Entry(master,width=3,textvariable=self.notch_freq).grid(row=1,column=0,sticky='w')
+		self.notch_freq.set(60)
+
+		#############################
+		# BANDPASS SETUP
+		# button
+		tk.Checkbutton(master, text="Bandpass", variable=self.BANDPASS).grid(row=2,sticky=tk.W)
+		# low freq
+		tk.Scale(master,from_=0, to=50,length=500, orient='horizontal',
+			variable=self.bp_low_freq, label='Low Cut').grid(row=3,column=0,stick=tk.W)
+		tk.Entry(master,width=3,textvariable=self.bp_low_freq).grid(row=3,column=1)
+		self.bp_low_freq.set(1)
+		tk.Frame(relief='ridge',height=2).grid(stick='ew')
+		# high freq
+		tk.Scale(master,from_=0, to=200, length=500,orient='horizontal',
+			variable=self.bp_high_freq, label='High Cut').grid(row=4,column=0,stick=tk.W)
+		tk.Entry(master,width=3,textvariable=self.bp_high_freq).grid(row=4,column=1)
+		self.bp_high_freq.set(50)
+
+		window_button = tk.Checkbutton(master, text="Window Filter", variable=self.WINDOW).grid(row=8,sticky=tk.W)
 
 	def data_receive(self,sample, root):
-		if len(self.data_buff) < 1000:
+		if len(self.data_buff) < 250:
 			self.data_buff.append(sample)
 		else:
 			root.update_idletasks()
 			root.update()
 			data = self.data_buff
-			data = np.asarray(list(zip(*data)))
-			data = data.astype(np.float)					#convert to float
+			# data = list(map(list,zip(*data)))
+			data = np.asarray(data).T
+			data = data.astype(np.float)
+			# print('post float', data)
 			self.filter_control(data)
-			self.data_buff.pop()
-			self.data_buff.append(sample)
-			print('test')
-			print(self.NOTCH)
+			# self.data_buff.pop()
+			# self.data_buff.append(sample)
+			# print('test')
+			# print(self.NOTCH)
 
 
 
 	def filter_control(self,data):
-		if self.NOTCH is True:
+		# GET PARAMETERS FROM GUI
+		# Notch
+		NOTCH = self.NOTCH.get()
+		notch_freq = self.notch_freq.get()
+
+
+		# Bandpass
+		BANDPASS = self.BANDPASS.get()
+		bp_low_freq = self.bp_low_freq.get()
+		bp_high_freq = self.bp_high_freq.get()
+
+		# Window
+		WINDOW = self.WINDOW.get()
+
+		# FFT
+		FFT = self.FFT.get()
+
+		if NOTCH == 1:
 			# NOTCH Filter
 			# 
 			# Optional arguments:
 			# 		notch_Hz = 60
 			#
-			data = self.notch_filter(data)
-
-		if self.BANDPASS is True:
-			data = self.bandpass_filter(data, 1., 50.)
-			print('suc')
-		if self.WINDOW is True:
+			print("Notching at ", notch_freq)
+			data = self.notch_filter(data,notch_freq)
+		if BANDPASS == 1:
+			data = self.bandpass_filter(data, float(bp_low_freq), float(bp_high_freq))
+			print('Bandpass between ', float(bp_low_freq), float(bp_high_freq))
+		if WINDOW == 1:
 			data = self.window_filter(data)
 			print('ssuc')
-		if self.FFT is True:
+		if FFT == 1:
 			fft = self.fft_filter(self.data_buff)
 			print('sssssuc')
 
 
 	def notch_filter(self,data,notch_Hz=60):
-		processed_data = np.empty([16,1000])
+		processed_data = np.empty([16,250])
 		low_freq = float(notch_Hz - 1.0)
 		high_freq = float(notch_Hz + 1.0)
 		notch_Hz = np.array([low_freq, high_freq])			#empty array for filter kernel
-		b, a = signal.butter(2,notch_Hz/(self.fs_Hz / 2.0), 'bandstop') #set up filter
+		b, a = signal.butter(4,notch_Hz/(self.fs_Hz/2.0),'bandstop') #set up filter
 		for i,channel in enumerate(data):
 			processed_data[i] = signal.lfilter(b,a,channel) 	#filter each channel
 		return processed_data
 	
 
 	def bandpass_filter(self,data,low_cut,high_cut):
-		processed_data = np.empty([16,1000])
+		processed_data = np.empty([16,250])
 		bandpass_frequencies = np.array([low_cut, high_cut])
 		b,a = signal.butter(2, bandpass_frequencies/(self.fs_Hz / 2.0), 'bandpass')
 		# apply filter to data window
@@ -100,7 +151,6 @@ class Filters:
 			# fft_data1 = fft_data1.reshape(250)
 			print(fft_data1)
 			fft_array[i] = fft_data1
-		time.sleep(2)
 		return fft_array
 
 	def rms(self,data):

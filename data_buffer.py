@@ -4,6 +4,7 @@ import filters
 import tkinter
 import time
 import csv
+import udp_server
 
 class Data_Buffer():
 
@@ -33,8 +34,9 @@ class Data_Buffer():
 			# subject 2
 			self.subj2_EEG.append(sample[8:14])
 			self.subj2_ECG.append(sample[14:17])
-			print('huh')
 			filt.data_receive(sample, self.root)
+			udp.receive(sample)
+
 
 def main():
 	port = '/dev/ttyUSB0'
@@ -42,6 +44,8 @@ def main():
 	db = Data_Buffer(root)
 	global filt
 	filt = filters.Filters(root)
+	global udp
+	udp = udp_server.UDPServer()
 	# board = open_bci_v3.OpenBCIBoard(port=port)
 	# board.start_streaming(db.buffer)
 	channel_data = []
@@ -56,7 +60,6 @@ def main():
 	start = time.time()
 	for i,sample in enumerate(channel_data):
 		end = time.time()
-		print('wot')
 		# Mantain the 250 Hz sample rate when reading a file
 		# Wait for a period of time if the program runs faster than real time
 		time_of_recording = i/250
@@ -66,7 +69,7 @@ def main():
 		if time_of_recording > time_of_program:
 			# print('PAUSING ', time_of_recording-time_of_program, ' Seconds')
 			time.sleep(time_of_recording-time_of_program)
-		db.buffer(channel_data)
+		db.buffer(sample)
 
 
 if __name__ == '__main__':
