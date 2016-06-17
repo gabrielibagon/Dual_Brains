@@ -5,6 +5,7 @@ import tkinter
 import time
 import csv
 import udp_server
+import webserver
 
 class Data_Buffer():
 
@@ -34,8 +35,9 @@ class Data_Buffer():
 			# subject 2
 			self.subj2_EEG.append(sample[8:14])
 			self.subj2_ECG.append(sample[14:17])
-			filt.data_receive(sample, self.root)
-			udp.receive(sample)
+			# filt.data_receive(sample, self.root)
+			webserver.receive(sample)
+
 
 
 def main():
@@ -46,6 +48,10 @@ def main():
 	filt = filters.Filters(root)
 	global udp
 	udp = udp_server.UDPServer()
+	print('doot')
+	global webserver
+	webserver = webserver.Websocket()
+	# webserver.connect()
 	# board = open_bci_v3.OpenBCIBoard(port=port)
 	# board.start_streaming(db.buffer)
 	channel_data = []

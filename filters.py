@@ -56,6 +56,10 @@ class Filters:
 		tk.Entry(master,width=3,textvariable=self.bp_high_freq).grid(row=4,column=1)
 		self.bp_high_freq.set(50)
 
+
+		##############################
+		# WINDOW SETUP
+		# 
 		window_button = tk.Checkbutton(master, text="Window Filter", variable=self.WINDOW).grid(row=8,sticky=tk.W)
 
 	def data_receive(self,sample, root):
