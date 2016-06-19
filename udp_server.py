@@ -8,6 +8,7 @@ Requires:
 """
 import json
 import socket
+import pickle
 
 class UDPServer():
   def __init__(self, ip='localhost', port=8888):
@@ -32,11 +33,10 @@ class UDPServer():
     print("Server started on port " + str(self.port))
 
   def receive(self, sample): 
-    self.send_data(json.dumps(sample))
+    self.send_data((pickle.dumps(sample)))
     
   def send_data(self, data):
-    print(data)
-    self.server.sendto(bytes(data, "utf-8"), (self.ip, self.port))
+    self.server.sendto(data, (self.ip, self.port))
 
   # From IPlugin: close sockets, send message to client
   def deactivate(self):

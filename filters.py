@@ -6,10 +6,24 @@ import tkinter as tk
 import time
 
 class Filters:
-	def __init__(self,master):
+	def __init__(self):
 		self.fs_Hz = 250
+		self.filter_window = 250
 		self.data_buff = deque([])
 		self.filtered_data = []
+		self.GUI = False
+		if self.GUI is True:
+			self.gui_setup()
+
+
+
+	def gui_setup(self):
+		######################################################################
+		# FILTER CONTROL GUI
+		#
+		master = tk.Tk()
+		self.master = master
+		self.master.title("Filter Control")
 
 		# Filtering Variables
 		# notch variables
@@ -23,12 +37,6 @@ class Filters:
 
 		self.WINDOW = tk.IntVar()
 		self.FFT = tk.IntVar()
-
-		######################################################################
-		# FILTER CONTROL GUI
-		#
-		self.master = master
-		master.title("Filter Control")
 		
 		############################
 		# NOTCH SETUP
@@ -44,14 +52,17 @@ class Filters:
 		# BANDPASS SETUP
 		# button
 		tk.Checkbutton(master, text="Bandpass", variable=self.BANDPASS).grid(row=2,sticky=tk.W)
+		# physical properties and limitations
+		max_cutoff = self.filter_window/2
+		# low_cutoff_max = self.bp_high_freq.get()
 		# low freq
-		tk.Scale(master,from_=0, to=50,length=500, orient='horizontal',
+		tk.Scale(master,from_=0, to=max_cutoff,length=500, orient='horizontal',
 			variable=self.bp_low_freq, label='Low Cut').grid(row=3,column=0,stick=tk.W)
 		tk.Entry(master,width=3,textvariable=self.bp_low_freq).grid(row=3,column=1)
 		self.bp_low_freq.set(1)
 		tk.Frame(relief='ridge',height=2).grid(stick='ew')
 		# high freq
-		tk.Scale(master,from_=0, to=200, length=500,orient='horizontal',
+		tk.Scale(master,from_=0, to=max_cutoff, length=500,orient='horizontal',
 			variable=self.bp_high_freq, label='High Cut').grid(row=4,column=0,stick=tk.W)
 		tk.Entry(master,width=3,textvariable=self.bp_high_freq).grid(row=4,column=1)
 		self.bp_high_freq.set(50)
@@ -60,20 +71,31 @@ class Filters:
 		##############################
 		# WINDOW SETUP
 		# 
-		window_button = tk.Checkbutton(master, text="Window Filter", variable=self.WINDOW).grid(row=8,sticky=tk.W)
+		window_button = tk.Checkbutton(master, text="Window Filter", variable=self.WINDOW).grid(row=5,sticky=tk.W)
 
-	def data_receive(self,sample, root):
+		##############################
+		# FFT SETUP
+		#
+		tk.Checkbutton(master, text="SEND FFT", variable=self.FFT).grid(row=6,sticky=tk.W)
+
+
+	def data_receive(self,sample):
 		if len(self.data_buff) < 250:
 			self.data_buff.append(sample)
-		else:
-			root.update_idletasks()
-			root.update()
+		if self.GUI is True:
+			self.master.update_idletasks()
+			self.master.update()
+		if len(self.data_buff) >249:
+			self.data_buff.popleft()
+			self.data_buff.append(sample)
+				# print(len(self.data_buff))
 			data = self.data_buff
 			# data = list(map(list,zip(*data)))
 			data = np.asarray(data).T
 			data = data.astype(np.float)
-			# print('post float', data)
-			self.filter_control(data)
+				# print('post float', data)
+			print('SHAPE', len(data), len(data[0]))
+			return self.filter_control(data)
 			# self.data_buff.pop()
 			# self.data_buff.append(sample)
 			# print('test')
@@ -84,39 +106,50 @@ class Filters:
 	def filter_control(self,data):
 		# GET PARAMETERS FROM GUI
 		# Notch
-		NOTCH = self.NOTCH.get()
-		notch_freq = self.notch_freq.get()
+		# NOTCH = self.NOTCH.get()
+		# notch_freq = self.notch_freq.get()
 
 
-		# Bandpass
-		BANDPASS = self.BANDPASS.get()
-		bp_low_freq = self.bp_low_freq.get()
-		bp_high_freq = self.bp_high_freq.get()
+		# # Bandpass
+		# BANDPASS = self.BANDPASS.get()
+		# bp_low_freq = self.bp_low_freq.get()
+		# bp_high_freq = self.bp_high_freq.get()
 
-		# Window
-		WINDOW = self.WINDOW.get()
+		# # Window
+		# WINDOW = self.WINDOW.get()
+
+
+		########################
+		# TEMP FOR NO GUI
+		NOTCH = 0
+		BANDPASS = 0
+		WINDOW = 0
 
 		# FFT
-		FFT = self.FFT.get()
-
-		if NOTCH == 1:
-			# NOTCH Filter
-			# 
-			# Optional arguments:
-			# 		notch_Hz = 60
-			#
-			print("Notching at ", notch_freq)
-			data = self.notch_filter(data,notch_freq)
-		if BANDPASS == 1:
-			data = self.bandpass_filter(data, float(bp_low_freq), float(bp_high_freq))
-			print('Bandpass between ', float(bp_low_freq), float(bp_high_freq))
-		if WINDOW == 1:
-			data = self.window_filter(data)
-			print('ssuc')
-		if FFT == 1:
-			fft = self.fft_filter(self.data_buff)
-			print('sssssuc')
-
+		FFT = 1
+		if NOTCH == 1 or BANDPASS == 1 or WINDOW == 1:
+			if NOTCH == 1:
+				# NOTCH Filter
+				# 
+				# Optional arguments:
+				# 		notch_Hz = 60
+				#
+				print("Notching at ", notch_freq)
+				data = self.notch_filter(data,notch_freq)
+			if BANDPASS == 1:
+				data = self.bandpass_filter(data, float(bp_low_freq), float(bp_high_freq))
+				print('Bandpass between ', float(bp_low_freq), float(bp_high_freq))
+			if WINDOW == 1:
+				data = self.window_filter(data)
+			return data
+		elif FFT == 1:
+			if FFT == 1:
+				print('fft going on')
+				fft = self.fft_filter(data)
+				# print('FFT FINAL',len(fft), ',', len(fft[0]))
+				return fft
+		else:
+			return data
 
 	def notch_filter(self,data,notch_Hz=60):
 		processed_data = np.empty([16,250])
@@ -144,18 +177,35 @@ class Filters:
 
 	def fft_filter(self,data):
 		fft_array = []
+		#######################################
+		# FIGURE OUT HOW TO DO THIS VIA METHOD
+		# new_data = np.array([])
+		# new_data = data
+		# data = np.transpose(new_data)
+		# for i,channel in enumerate(data):
+		# 	for j in range(len(data[0])): #250
+		# 		new_data[j][i] = channel[j]
+		# data = new_data
+		########################################
 		for i,channel in enumerate(data):
+			# print('ch',channel)
 			#FFT ALGORITHM
 			fft_data1 = []
 			fft_data2 = []
 			fft_data1 = np.fft.fft(channel).conj().reshape(-1, 1)
-			fft_data1 = abs(fft_data1/self.fs_Hz) #generate two-sided spectrum
-			fft_data2 = fft_data1[0:(250/2)+1]
+			fft_data2 = abs(fft_data1/self.filter_window) #generate two-sided spectrum
+			fft_data1 = fft_data2[0:(250/2)]
+			# fft_data1 = fft_data1*2
 			fft_data1[1:len(fft_data1)-1] = 2*fft_data1[1:len(fft_data1)-1]
+			fft_data1 = fft_data1.reshape(125)
 			# fft_data1 = fft_data1.reshape(250)
-			print(fft_data1)
-			fft_array[i] = fft_data1
+			fft_array.append(fft_data1)
+			# print(fft_data1)
 		return fft_array
+
+	def spectogram(self,data):
+		print('test')
+
 
 	def rms(self,data):
 		rms = []
