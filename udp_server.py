@@ -7,6 +7,7 @@ Requires:
   - websockets
 """
 import json
+import pickle
 import socket
 
 class UDPServer():
@@ -32,11 +33,17 @@ class UDPServer():
     print("Server started on port " + str(self.port))
 
   def receive(self, sample): 
-    self.send_data(json.dumps(sample))
+    # self.send_data(json.dumps(sample))
+    self.send_data(sample)
+
+    return
+
     
   def send_data(self, data):
-    print(data)
-    self.server.sendto(bytes(data, "utf-8"), (self.ip, self.port))
+    message = "hey"
+    print('datatatatatatar',data[0])
+    self.server.sendto(str.encode(data[0]),(self.ip, self.port))
+    print('sup')
 
   # From IPlugin: close sockets, send message to client
   def deactivate(self):

@@ -27,6 +27,7 @@ import threading
 import sys
 import pdb
 import binascii
+import data_buffer
 
 SAMPLE_RATE = 250.0  # Hz
 START_BYTE = 0xA0  # start of data packet
@@ -101,6 +102,50 @@ class OpenBCIBoard(object):
     self.reconnect_freq = 5
     self.packets_dropped = 0
 
+
+    #SET PARAMS FOR ECG AND GSR CHANNELS
+    # ECG subj1:
+    self.ser.write(b'x') # activate channel settings
+    time.sleep(.5)
+    self.ser.write(b'7') # choose channel 7
+    time.sleep(.5)
+    self.ser.write(b'0') # power done (0=ON)
+    time.sleep(.5)
+    self.ser.write(b'4') # gain set (4=8x)
+    time.sleep(.5)
+    self.ser.write(b'0') # input type set (0 = Normal)
+    time.sleep(.5)
+    self.ser.write(b'0') # remove from bias
+    time.sleep(.5)
+    self.ser.write(b'0') # remove from Srb2
+    time.sleep(.5)
+    self.ser.write(b'0') # disconnect input from srb1 (default)
+    time.sleep(.5)
+    self.ser.write(b'X') # set channel settings
+    time.sleep(1)
+
+    ## ECG subj2:
+    self.ser.write(b'x') # activate channel settings
+    time.sleep(.5)
+    self.ser.write(b'U') # choose channel 7
+    time.sleep(.5)
+    self.ser.write(b'0') # power done (0=ON)
+    time.sleep(.5)
+    self.ser.write(b'4') # gain set (4=8x)
+    time.sleep(.5)
+    self.ser.write(b'0') # input type set (0 = Normal)
+    time.sleep(.5)
+    self.ser.write(b'0') # remove from bias
+    time.sleep(.5)
+    self.ser.write(b'0') # remove from Srb2
+    time.sleep(.5)
+    self.ser.write(b'0') # disconnect input from srb1 (default)
+    time.sleep(.5)
+    self.ser.write(b'X') # set channel settings
+    time.sleep(1)
+    # START STREAMING HERE
+    self.start_streaming(self.data_send)
+
     #Disconnects from board when terminated
     atexit.register(self.disconnect)
   
@@ -119,6 +164,8 @@ class OpenBCIBoard(object):
   def getNbAUXChannels(self):
     return  self.aux_channels_per_sample
 
+  def data_send(self,data):
+    db.buffer(data.channel_data)
   def start_streaming(self, callback, lapse=-1):
     """
     Start handling streaming data from the board. Call a provided callback
@@ -126,12 +173,11 @@ class OpenBCIBoard(object):
 
     Args:
       callback: A callback function -- or a list of functions -- that will receive a single argument of the
-          OpenBCISample object captured.
+          OpenBCISample object captured.t
     """
     if not self.streaming:
       self.ser.write(b'b')
       self.streaming = True
-
     start_time = timeit.default_timer()
 
     # Enclose callback funtion in a list if it comes alone
@@ -535,5 +581,7 @@ class OpenBCISample(object):
     self.channel_data = channel_data;
     self.aux_data = aux_data;
 
-
-
+if __name__ == '__main__':
+  port = '/dev/ttyUSB0'
+  db = data_buffer.Data_Buffer();
+  board = OpenBCIBoard(port=port)
