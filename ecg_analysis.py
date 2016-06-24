@@ -4,8 +4,11 @@ from scipy import signal, fft
 import sys
 import time
 from recordclass import recordclass
+import matplotlib.pyplot as plt
+import time
 
-class ECG_analysis:
+
+class ECG_Analysis:
 
 	def __init__(self):
 		np.set_printoptions(threshold=np.nan)
@@ -17,12 +20,13 @@ class ECG_analysis:
 		self.ransac_window_size = 3.0
 		self.thresholds = []
 		self.max_powers = []
-
+		self.PEAK = False
 	def filter_data(self,sample):
 		# print("SAMPLE",sample);
-		if len(self.data_buff) < 750:
+		# print("SAMPLE", sample)
+		if len(self.data_buff) < 500:
 			self.data_buff.append(sample)
-		if len(self.data_buff) == 750:
+		if len(self.data_buff) == 500:
 			self.data_buff.popleft()
 			self.data_buff.append(sample)
 			# print("WOWOWOWO",self.data_buff)
@@ -32,7 +36,6 @@ class ECG_analysis:
 			# print(data.T)
 			# print("datatatata", data);
 			filtered_eeg = self.filter_control(data)
-			# print((filtered_eeg.T)[0])
 			return (filtered_eeg.T)[0];
 
 	def filter_control(self,data):
@@ -43,20 +46,15 @@ class ECG_analysis:
 		# FILTER CONTROL FLOW
 		filtered_data = self.notch_filter(data,notch_freq)
 		filtered_data = self.bandpass_filter(filtered_data, float(bp_low_freq), float(bp_high_freq))
-		self.peak_detect(filtered_data)
+		# "five point derivative" 
+		filtered_data = np.diff(filtered_data)
+		# squaring function
+		filtered_data = filtered_data**2
+		# moving window integration
+		# np.convolve(window,np.ones((50,))/50)[(50-1):]
+		print(filtered_data)
+
 		return filtered_data
-
-	def peak_detect(self,data):
-		# square of the discrete difference of the signal)
-		decg = np.diff(data)
-		decg_power = decg**2
-		for i in range(len(decg_power)/750)
-		sample = slice(i*750, (i+1)*750)
-		d = decg_power[sample]
-		self.thresholds.append(0.5*np.std(d))
-		self.max_powers.append(np.max(d))
-
-
 
 	def notch_filter(self,data,notch_Hz=60):
 		processed_data = np.empty(750)
@@ -64,7 +62,7 @@ class ECG_analysis:
 		high_freq = float(notch_Hz + 1.0)
 		notch_Hz = np.array([low_freq, high_freq])			#empty array for filter kernel
 		b, a = signal.butter(4,notch_Hz/(self.fs_Hz/2.0),'bandstop') #set up filter
-		return signal.lfilter(b,a,channel)
+		return signal.lfilter(b,a,data)
 	
 
 	def bandpass_filter(self,data,low_cut,high_cut):
@@ -72,4 +70,4 @@ class ECG_analysis:
 		bandpass_frequencies = np.array([low_cut, high_cut])
 		b,a = signal.butter(2, bandpass_frequencies/(self.fs_Hz / 2.0), 'bandpass')
 		# apply filter to data window
-		return signal.lfilter(b,a,channel)
+		return signal.lfilter(b,a,data)
