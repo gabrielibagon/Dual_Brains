@@ -21,14 +21,15 @@ void setup(){
 }
 
 void drawStuff(float[] data_list){
+  println(data_list);
   noStroke();
   //copy(sourceX, sourceY, sourceW, sourceH, dx, dy, dw, dh)
   copy(0,0,width,height, 1,0, width, height);
-  for(int i = 0; i < 5; i++){
-    //println(data_list[0]);
-    rect(0, i, color((int)map(data_list[i], -20, 20, 0, 255)));
+  //for(int i = 0; i < 5; i++){
+  //  //println(data_list[0]);
+  //  rect(0, i, color((int)map(data_list[i], -20, 20, 0, 255)));
     //println((int)map(dataSet[i], 0, 100, 0, 255));
-  }
+  //}
 }
 
 // //Populate dataSet with with random Values

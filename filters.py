@@ -43,6 +43,8 @@ class Filters:
 		if len(self.data_buff) < 250:
 			self.data_buff.append(sample)
 		if len(self.data_buff) == 250:
+			self.data_buff.popleft()
+			self.data_buff.append(sample)
 			data = self.data_buff
 			data = np.asarray(data).T
 			data = data.astype(np.float)
