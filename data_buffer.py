@@ -37,15 +37,16 @@ class Data_Buffer():
 		self.FIRST_BUFFER = True
 		self.full_out = []
 
+		self.count = 0
 
 
 	def buffer(self,sample):
 		if sample:
-			print(sample)
+			self.count = self.count+1
 			# SUBJECT 1
 			## EEG DATA
 			# subj1_EEG = filt_subj1.filter_data(sample[1:7])
-			# subj1_FFT = filt_subj1.fft_receive()
+			subj1_FFT = filt_subj1.fft_receive()
 			# ECG Data
 			# subj1_beat = ecg_subj1.filter_data(sample[7])
 
@@ -53,6 +54,10 @@ class Data_Buffer():
 			## EEG Data
 			# subj2_EEG = filt_subj2.filter_data(sample[10:16])
 			# subj2_FFT = filt_subj2.fft_receive();
+			if subj1_FFT is not None:
+				print(subj1_FFT)
+				if self.count%50 is 0:
+					udp.receive(subj1_FFT)
 
 
 def main():
@@ -60,45 +65,37 @@ def main():
 
 	global udp
 	udp = udp_server.UDPServer()
-	global osc
-	osc = streamer_osc.StreamerOSC()
-	global tcp
-		# tcp = tcp_server.TCPServer()
+
+	db = Data_Buffer()
+	# board = open_bci_v3.OpenBCIBoard(port=port)
+	# board.start_streaming(db.buffer)
+
+
+	channel_data = []
+	with open('sample16.txt', 'r') as file:
+		reader = csv.reader(file, delimiter=',')
+		next(file)
+		for j,line in enumerate(reader):
+			line = [x.replace(' ','') for x in line]
+			channel_data.append(line) #list
 
 
 
 
-
-	# # client = webserver.WebSocketClient()
-
-	# # webserver.connect()
-	# # board = open_bci_v3.OpenBCIBoard(port=port)
-	# # board.start_streaming(db.buffer)
-	# channel_data = []
-	# with open('sample16.txt', 'r') as file:
-	# 	reader = csv.reader(file, delimiter=',')
-	# 	next(file)
-	# 	for j,line in enumerate(reader):
-	# 		line = [x.replace(' ','') for x in line]
-	# 		channel_data.append(line) #list
-
-
-
-
-	# last_time_of_program = 0
-	# start = time.time()
-	# for i,sample in enumerate(channel_data):
-	# 	end = time.time()
-	# 	#Mantain the 250 Hz sample rate when reading a file
-	# 	#Wait for a period of time if the program runs faster than real time
-	# 	time_of_recording = i/250
-	# 	time_of_program = end-start
-	# 	# print('i/250 (time of recording)', time_of_recording)
-	# 	# print('comp timer (time of program)', time_of_program)
-	# 	if time_of_recording > time_of_program:
-	# 		# print('PAUSING ', time_of_recording-time_of_program, ' Seconds')
-	# 		time.sleep(time_of_recording-time_of_program)
-	# 	db.buffer(sample)
+	last_time_of_program = 0
+	start = time.time()
+	for i,sample in enumerate(channel_data):
+		end = time.time()
+		#Mantain the 250 Hz sample rate when reading a file
+		#Wait for a period of time if the program runs faster than real time
+		time_of_recording = i/250
+		time_of_program = end-start
+		# print('i/250 (time of recording)', time_of_recording)
+		# print('comp timer (time of program)', time_of_program)
+		if time_of_recording > time_of_program:
+			# print('PAUSING ', time_of_recording-time_of_program, ' Seconds')
+			time.sleep(time_of_recording-time_of_program)
+		db.buffer(sample)
 
 
 if __name__ == '__main__':

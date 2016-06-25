@@ -11,7 +11,7 @@ import pickle
 import socket
 
 class UDPServer():
-  def __init__(self, ip='localhost', port=8888):
+  def __init__(self, ip='localhost', port=8000):
     self.ip = ip
     self.port = port
     self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -34,15 +34,15 @@ class UDPServer():
 
   def receive(self, sample): 
     # self.send_data(json.dumps(sample))
-    self.send_data(sample)
-
-    return
+    # print(sample.astype('str'))
+    json_sample = json.dumps(sample.tolist())
+    print(json_sample)
+    self.send_data(json_sample)
 
     
   def send_data(self, data):
-    message = "hey"
-    print('datatatatatatar',data[0])
-    self.server.sendto(str.encode(data[0]),(self.ip, self.port))
+    print(type(data));
+    self.server.sendto(data.encode(),(self.ip, self.port))
     print('sup')
 
   # From IPlugin: close sockets, send message to client
