@@ -1,5 +1,7 @@
 float[] dataSet; //random values
-
+void draw(){
+  return;
+}
 //data_list is where data is stored
 float[] data_list;
 
@@ -18,12 +20,13 @@ void setup(){
 
 }
 
-void draw(){
+void drawStuff(float[] data_list){
   noStroke();
   //copy(sourceX, sourceY, sourceW, sourceH, dx, dy, dw, dh)
   copy(0,0,width,height, 1,0, width, height);
-  for(int i = 0; i < 125; i++){
-    set(0, i, color((int)map(data_list[i], -20, 20, 0, 255)));
+  for(int i = 0; i < 5; i++){
+    //println(data_list[0]);
+    rect(0, i, color((int)map(data_list[i], -20, 20, 0, 255)));
     //println((int)map(dataSet[i], 0, 100, 0, 255));
   }
 }
@@ -59,5 +62,5 @@ void receive(byte[] received_data, String HOST_IP, int PORT_RX) {
   }
 
   // SEND THIS BAD BOY OVER TO YR FUNCTIONS!
-  println(data_list);
+  drawStuff(data_list);
 }
