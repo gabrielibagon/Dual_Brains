@@ -35,7 +35,11 @@ class UDPServer():
   def receive(self, sample): 
     # self.send_data(json.dumps(sample))
     # print(sample.astype('str'))
-    json_sample = json.dumps(sample.tolist())
+    print(type(sample))
+    if type(sample) is list:
+      json_sample = json.dumps(sample)
+    else:
+      json_sample = json.dumps(sample.tolist())
     print(json_sample)
     self.send_data(json_sample)
 

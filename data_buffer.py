@@ -45,8 +45,8 @@ class Data_Buffer():
 			self.count = self.count+1
 			# SUBJECT 1
 			## EEG DATA
-			# subj1_EEG = filt_subj1.filter_data(sample[1:7])
-			subj1_FFT = filt_subj1.fft_receive()
+			subj1_EEG = filt_subj1.filter_data(sample[1:7])
+			# subj1_FFT = filt_subj1.fft_receive(sample[1:7])
 			# ECG Data
 			# subj1_beat = ecg_subj1.filter_data(sample[7])
 
@@ -54,10 +54,11 @@ class Data_Buffer():
 			## EEG Data
 			# subj2_EEG = filt_subj2.filter_data(sample[10:16])
 			# subj2_FFT = filt_subj2.fft_receive();
-			if subj1_FFT is not None:
-				print(subj1_FFT)
+			print(subj1_EEG)
+			if subj1_EEG is not None:
+				print(type(subj1_EEG))
 				if self.count%50 is 0:
-					udp.receive(subj1_FFT)
+					udp.receive(subj1_EEG)
 
 
 def main():

@@ -22,12 +22,9 @@ class Filters:
 		if len(self.data_buff) == 250:
 			self.data_buff.popleft()
 			self.data_buff.append(sample)
-			# print("WOWOWOWO",self.data_buff)
 			data = self.data_buff
 			data = np.asarray(data).T
 			data = data.astype(np.float)
-			# print(data.T)
-			# print("datatatata", data);
 			filtered_eeg = self.filter_control(data)
 			# print((filtered_eeg.T)[0])
 			return (filtered_eeg.T)[0];
@@ -42,9 +39,10 @@ class Filters:
 		filtered_data = self.bandpass_filter(filtered_data, float(bp_low_freq), float(bp_high_freq))
 		return filtered_data
 
-	def fft_receive(self):
+	def fft_receive(self,sample):
+		if len(self.data_buff) < 250:
+			self.data_buff.append(sample)
 		if len(self.data_buff) == 250:
-			# print("WOWOWOWO",self.data_buff)
 			data = self.data_buff
 			data = np.asarray(data).T
 			data = data.astype(np.float)
@@ -60,7 +58,6 @@ class Filters:
 			processed_data[i] = signal.lfilter(b,a,channel) 	#filter each channel
 		return processed_data
 	
-
 	def bandpass_filter(self,data,low_cut,high_cut):
 		processed_data = np.empty([6,250])
 		bandpass_frequencies = np.array([low_cut, high_cut])
@@ -73,7 +70,6 @@ class Filters:
 	def fft_filter(self,data):
 		fft_array = []
 		for i,channel in enumerate(data):
-			# print('ch',channel)
 			#FFT ALGORITHM
 			fft_data1 = []
 			fft_data2 = []
@@ -86,4 +82,4 @@ class Filters:
 			# fft_data1 = fft_data1.reshape(250)
 			fft_array.append(fft_data1)
 			# print(fft_data1)
-		return fft_array
+		return np.asarray(fft_array)
