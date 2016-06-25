@@ -1,4 +1,7 @@
-float[] dataSet;
+float[] dataSet; //random values
+
+//data_list is where data is stored
+float[] data_list;
 
 void setup(){
   dataSet = new float[125];
@@ -20,20 +23,20 @@ void draw(){
   //copy(sourceX, sourceY, sourceW, sourceH, dx, dy, dw, dh)
   copy(0,0,width,height, 1,0, width, height);
   for(int i = 0; i < 125; i++){
-    set(0, i, color((int)map(dataSet[i], 0, 100, 0, 255)));
+    set(0, i, color((int)map(data_list[i], -20, 20, 0, 255)));
     //println((int)map(dataSet[i], 0, 100, 0, 255));
   }
 }
 
-
-void data_to_draw(float[] data){
-  int i = 0;
-  println(dataSet);
-  for(float num : dataSet){
-    dataSet[i] = random(0,100);
-    i++;
-  }
-}
+// //Populate dataSet with with random Values
+// void data_to_draw(float[] data){
+//   int i = 0;
+//   println(dataSet);
+//   for(float num : dataSet){
+//     dataSet[i] = random(0,100);
+//     i++;
+//   }
+// }
 
 // **********************************************************
 // NETWORKING
@@ -49,12 +52,12 @@ void receive(byte[] received_data, String HOST_IP, int PORT_RX) {
   receivedFromUDP ="";
   String datatat = new String(received_data);
   String[] items = datatat.replaceAll("\\[","").replaceAll("\\]","").split(",");
-  float[] data_list = new float[items.length];
+  data_list = new float[items.length];
 
   for (int i=0;i<items.length;i++){
     data_list[i] = Float.parseFloat(items[i]);
   }
-  
+
   // SEND THIS BAD BOY OVER TO YR FUNCTIONS!
   println(data_list);
 }
