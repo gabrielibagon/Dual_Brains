@@ -20,6 +20,7 @@ void setup() {
   //Spectrogram graph
   // Spectrogram(int DATAPOINTS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
   s = new Spectrogram(512, 0, 10, 20, 1, 10, width*0.75, height*0.75);
+
 }
 
 void draw() {
@@ -34,6 +35,11 @@ void draw() {
 
   s.update(newData2);
   s.render();
+  text(frameRate, 20, 20);
+}
+
+void mousePressed(){
+  g.debugMode = !g.debugMode;
 }
 
 void mousePressed() {
