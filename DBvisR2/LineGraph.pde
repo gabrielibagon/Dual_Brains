@@ -70,20 +70,19 @@ class LineGraph extends Graph {
             //DEBUG UTIL: LINE MODE
               strokeWeight(5);
               colorMode(RGB, 255,255,255,100);
-              stroke(color(255,255,255,10));
+              noStroke();
+              fill(color(255,255,255,10));
               ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 20 * scale, -20 * scale), 30, 30);
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 10 * scale, -10 * scale), 30, 30);
 
-              strokeWeight(3);
+              strokeWeight(1);
               stroke(cs[i]);
+              stroke(#FFFFFF);
               line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 20 * scale, -20 * scale) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 10 * scale, -10 * scale) ,
                   (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 20 * scale, -20 * scale) );
-
-            //ADD CURVE VERTEX
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 10 * scale, -10 * scale) );
             }
-
         }
       popMatrix();
     }

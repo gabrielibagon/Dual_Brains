@@ -13,7 +13,7 @@ class Graph {
   boolean screenLeft;//is it from the person to the left
   float sampleRate; //number of new data samples sent per second
   int timeWindow; //number of seconds of history to display
-  float scale; //scale of graph in pixels per second 
+  float scale; //scale of graph in pixels per second
   PVector origin;
   float upperLim;
   float lowerLim;
@@ -26,7 +26,7 @@ class Graph {
     this.timeWindow = TIME_WINDOW;
     this.scale = SCALE;
     this.origin = new PVector(ORIGIN_X, ORIGIN_Y);
-     this.upperLim = UPPER_LIM;
+    this.upperLim = UPPER_LIM;
     this.lowerLim = LOWER_LIM;
   }
 
