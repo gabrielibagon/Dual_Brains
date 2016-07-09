@@ -36,6 +36,7 @@ class Graph {
     strokeWeight(1);
     stroke(255);
     translate(origin.x, origin.y);
+    //draw the axis
     line(0, 0, 0, -1 * sampleRate * timeWindow * scale);
     line(0, 0, sampleRate * timeWindow * scale, 0);
     popMatrix();
