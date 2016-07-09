@@ -2,24 +2,21 @@ class LineGraph extends Graph {
   int channels;
   float[][] data;
   int numOfReadingsStored;
-  float upperLim;
-  float lowerLim;
 
-  LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y){
-    super(SAMPLE_RATE, TIME_WINDOW, SCALE, ORIGIN_X, ORIGIN_Y);
+
+  LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
+    super(SAMPLE_RATE, TIME_WINDOW, SCALE, ORIGIN_X, ORIGIN_Y, UPPER_LIM, LOWER_LIM);
     this.channels = CHANNELS;
     this.numOfReadingsStored = int(SAMPLE_RATE * TIME_WINDOW);
-    this.upperLim = UPPER_LIM;
-    this.lowerLim = LOWER_LIM;
     data = new float[CHANNELS][numOfReadingsStored];
   }
 
-  void update(float[] newData){ //Read in new data
+  void update(float[] newData) { //Read in new data
     //push new data into each channel stack
 
     //copy data backwards
-    for(int i = 0; i < this.channels; i++){ //for each channel...
-      for(int j = numOfReadingsStored-1; j > 0 ; j--){//iterate from last value to the second (index 1)
+    for (int i = 0; i < this.channels; i++) { //for each channel...
+      for (int j = numOfReadingsStored-1; j > 0; j--) {//iterate from last value to the second (index 1)
         data[i][j] = data[i][j-1];
       }
       data[i][0] = newData[i]; //store new value for corresponding channel
