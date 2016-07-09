@@ -27,26 +27,70 @@ class LineGraph extends Graph {
   }
 
   void render(){
-    //super.render();
-    pushMatrix();
-      translate(origin.x, origin.y);
-      noFill();
-      strokeWeight(0.5);
-      stroke(#FF0000);
-      for(int i = 0; i < this.channels; i++){//for each channel...
-        for(int j = 1; j < numOfReadingsStored; j++){//connect every point
 
-          //DEBUG UTIL: POINTS MODE
-            // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-            //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
+    if(debugMode){
+      super.render();
+      //-----------------------
+      //DEBUG MODE RENDER:
+      //-----------------------
+      pushMatrix();
+        translate(origin.x, origin.y);
+        noFill();
+        strokeWeight(0.5);
+        stroke(#FF0000);
+        for(int i = 0; i < this.channels; i++){//for each channel...
+          for(int j = 1; j < numOfReadingsStored; j++){//connect every point
 
-          //DEBUG UTIL: LINE MODE
-            line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 5 * scale, -5 * scale) ,
-                (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-                (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale) );
-          }
-      }
-    popMatrix();
+            //DEBUG UTIL: POINTS MODE
+              // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
+
+            //DEBUG UTIL: LINE MODE
+              line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 5 * scale, -5 * scale) ,
+                  (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale) );
+            }
+        }
+      popMatrix();
+    } else {
+      //-----------------------
+      //VISUALIZE MODE RENDER
+      //-----------------------
+      //blendMode(DIFFERENCE);
+      pushMatrix();
+        translate(origin.x, origin.y);
+        noFill();
+        strokeWeight(3);
+        color[] cs = {color(#A4036F), color(#048BA8), color(#16DB93), color(#EFEA5A), color(#F29E4C), color(#50D0ED)};
+        for(int i = this.channels-1; i >= 0; i--){//for each channel...
+          for(int j = 1; j < numOfReadingsStored; j++){//connect every point
+
+            //DEBUG UTIL: POINTS MODE
+              // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
+
+            //DEBUG UTIL: LINE MODE
+              strokeWeight(5);
+              colorMode(RGB, 255,255,255,100);
+              stroke(color(255,255,255,10));
+              ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 20 * scale, -20 * scale), 30, 30);
+
+              strokeWeight(3);
+              stroke(cs[i]);
+              line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 20 * scale, -20 * scale) ,
+                  (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 20 * scale, -20 * scale) );
+
+            //ADD CURVE VERTEX
+            }
+
+        }
+      popMatrix();
+    }
   }
+
+
 }

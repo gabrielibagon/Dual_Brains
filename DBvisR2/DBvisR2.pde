@@ -13,7 +13,7 @@ void setup(){
   //Test Graph
   //Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, int ORIGIN_X, int ORIGIN_Y){
   //LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y){
-  g = new LineGraph(6, 250, -250, 20,5, 3, width*0.15, height*0.75);
+  g = new LineGraph(6, 250, -250, 20,5, 6, 20, height-20);
 }
 
 void draw(){
@@ -21,8 +21,9 @@ void draw(){
   float[] newData = {random(-250,250), random(-250,250), random(-250,250), random(-250,250), random(-250,250), random(-250,250)};
   g.update(newData);
   g.render();
+  text(frameRate, 20, 20);
 }
 
 void mousePressed(){
-
+  g.debugMode = !g.debugMode;
 }
