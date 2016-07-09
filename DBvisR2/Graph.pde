@@ -10,6 +10,7 @@ SUBCLASSES:
 class Graph {
   boolean show; //hide or show
   boolean debugMode;
+  boolean screenLeft;
   PVector origin;
   int timeWindow; //number of seconds of history to display
   float sampleRate; //number of new data samples sent per second
@@ -18,6 +19,7 @@ class Graph {
   Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y){
     this.show = true;
     this.debugMode = true;
+    this.screenLeft = true;
     this.timeWindow = TIME_WINDOW;
     this.sampleRate = SAMPLE_RATE;
     this.scale = SCALE;
@@ -34,5 +36,6 @@ class Graph {
       line(0,0,sampleRate * timeWindow * scale,0);
     popMatrix();
   }
+
 
 }
