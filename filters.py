@@ -10,39 +10,54 @@ class Filters:
 		np.set_printoptions(threshold=np.nan)
 
 		self.fs_Hz = 250
-		self.filter_window = 250
+		self.filter_window = 500
 		self.data_buff = deque([])
 		self.filtered_data = []
 		# recordclass structure should hold all of the information that Processing may need
 
 	def filter_data(self,sample):
 		# print("SAMPLE",sample);
-		if len(self.data_buff) < 250:
+		if len(self.data_buff) < 500:
 			self.data_buff.append(sample)
-		if len(self.data_buff) == 250:
+		else:
 			self.data_buff.popleft()
 			self.data_buff.append(sample)
 			data = self.data_buff
 			data = np.asarray(data).T
 			data = data.astype(np.float)
-			filtered_eeg = self.filter_control(data)
-			# print((filtered_eeg.T)[0])
-			return (filtered_eeg.T)[0];
+			filtered_eeg = self.noise_filters(data)
+			return filtered_eeg
 
-	def filter_control(self,data):
-		# FILTER PARAMS
-		notch_freq = 60;
-		bp_low_freq = 1;
-		bp_high_freq = 50;
-		# FILTER CONTROL FLOW
-		filtered_data = self.notch_filter(data,notch_freq)
-		filtered_data = self.bandpass_filter(filtered_data, float(bp_low_freq), float(bp_high_freq))
-		return filtered_data
+	def noise_filters(self,data):
+		fs = 250
+		fn = 125
+		filter_order = 2   #2nd order filter
+		f_high = 35
+		f_low = 5
+		wn = [59,61]       #Nyquist filter window
+
+		[b,a] = signal.butter(filter_order,f_high/fn, 'low')
+		[b1,a1] = signal.butter(filter_order,f_low/fn, 'high')
+		[bn,an] = signal.butter(4,[x/fn for x in wn], 'stop')
+
+		filtered_eeg = []
+		spectogram = []
+		notched = []
+		high_passed = []
+		low_passed = []
+		for i in range(len(data)):
+		  channel =  data[i]
+		  high_passed = signal.filtfilt(b1,a1,channel);        # high pass filter
+		  low_passed = signal.filtfilt(b,a,high_passed);       # low pass filter
+		  y = signal.filtfilt(bn,an,low_passed);        # notch filter
+		  filtered_eeg.append(y);
+		# print(filtered_eeg)
+		return filtered_eeg
 
 	def fft_receive(self,sample):
-		if len(self.data_buff) < 250:
+		if len(self.data_buff) < 500:
 			self.data_buff.append(sample)
-		if len(self.data_buff) == 250:
+		else:
 			self.data_buff.popleft()
 			self.data_buff.append(sample)
 			data = self.data_buff
@@ -50,24 +65,6 @@ class Filters:
 			data = data.astype(np.float)
 			return(self.fft_filter(data))
 
-	def notch_filter(self,data,notch_Hz=60):
-		processed_data = np.empty([6,250])
-		low_freq = float(notch_Hz - 1.0)
-		high_freq = float(notch_Hz + 1.0)
-		notch_Hz = np.array([low_freq, high_freq])			#empty array for filter kernel
-		b, a = signal.butter(4,notch_Hz/(self.fs_Hz/2.0),'bandstop') #set up filter
-		for i,channel in enumerate(data):
-			processed_data[i] = signal.lfilter(b,a,channel) 	#filter each channel
-		return processed_data
-	
-	def bandpass_filter(self,data,low_cut,high_cut):
-		processed_data = np.empty([6,250])
-		bandpass_frequencies = np.array([low_cut, high_cut])
-		b,a = signal.butter(2, bandpass_frequencies/(self.fs_Hz / 2.0), 'bandpass')
-		# apply filter to data window
-		for i,channel in enumerate(data):
-			processed_data[i] = signal.lfilter(b,a,channel)
-		return processed_data
 
 	def fft_filter(self,data):
 		fft_array = []

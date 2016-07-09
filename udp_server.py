@@ -9,13 +9,15 @@ Requires:
 import json
 import pickle
 import socket
+import numpy as np
 
 class UDPServer():
-  def __init__(self, ip='localhost', port=8000):
+  def __init__(self, ip='localhost', port=6100):
     self.ip = ip
     self.port = port
     self.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    
+    # self.logging.raiseExceptions = False
+
   def activate(self):
     print("udp_server plugin")
     print(self.args)
@@ -35,19 +37,26 @@ class UDPServer():
   def receive(self, sample): 
     # self.send_data(json.dumps(sample))
     # print(sample.astype('str'))
-    print(type(sample))
+    # print(type(sample))
+    sample = np.asarray(sample,dtype='int')
+    print(np.shape(sample))
     if type(sample) is list:
+      print("meep")
       json_sample = json.dumps(sample)
     else:
+      print("beep")
       json_sample = json.dumps(sample.tolist())
-    print(json_sample)
+    # print(json_sample)
     self.send_data(json_sample)
 
     
   def send_data(self, data):
-    print(type(data));
-    self.server.sendto(data.encode(),(self.ip, self.port))
-    print('sup')
+    # print(type(data));
+    try:
+      self.server.sendto(data.encode(),(self.ip, self.port))
+    except Exception as e:
+      print(e)
+      print('sup')
 
   # From IPlugin: close sockets, send message to client
   def deactivate(self):
