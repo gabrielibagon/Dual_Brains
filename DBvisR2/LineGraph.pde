@@ -33,10 +33,6 @@ class LineGraph extends Graph {
     for (int i = 0; i < this.channels; i++) {//for each channel...
       for (int j = 1; j < numOfReadingsStored; j++) {//connect every point
 
-        //DEBUG UTIL: POINTS MODE
-        // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-        //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
-
         //DEBUG UTIL: LINE MODE
         line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1), 
           (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 5 * scale, -5 * scale), 
