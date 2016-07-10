@@ -68,20 +68,43 @@ class LineGraph extends Graph {
               //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
 
             //DEBUG UTIL: LINE MODE
-              strokeWeight(5);
+              float baseWave = sin(TWO_PI * j/numOfReadingsStored) * cos(millis()*0.0001);
               colorMode(RGB, 255,255,255,100);
-              noStroke();
-              fill(color(255,255,255,10));
-              ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 10 * scale, -10 * scale), 30, 30);
+
+              strokeWeight(20);
+              stroke(color(255,255,255,5));
+              line(scale * (j-1) ,
+                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+                  scale * j,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+
+              strokeWeight(12);
+              stroke(color(255,255,255,10));
+              line(scale * (j-1) ,
+                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+                  scale * j,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+
+              strokeWeight(3);
+              stroke(color(255,255,255,40));
+              line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+                  (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+
+
+              //noStroke();
+              //fill(color(255,255,255,10));
+              // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale), 30, 30);
 
               strokeWeight(1);
               stroke(cs[i]);
               stroke(#FFFFFF);
               line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 10 * scale, -10 * scale) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
                   (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 10 * scale, -10 * scale) );
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
             }
         }
       popMatrix();
