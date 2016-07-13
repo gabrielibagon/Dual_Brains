@@ -68,8 +68,11 @@ class OpenBCIBoard(object):
   """
 
   def __init__(self, port=None, baud=115200, filter_data=True,
-    scaled_output=True, daisy=True, log=True, timeout=None):
+    scaled_output=True, daisy=True, log=True, timeout=None, send=None):
     self.log = log # print_incoming_text needs log
+    
+    self.db = send
+
     if not port:
       port = find_port()
       if not port:
@@ -102,8 +105,9 @@ class OpenBCIBoard(object):
     self.reconnect_freq = 5
     self.packets_dropped = 0
 
+    print("Setting up channel parameters...")
 
-    #SET PARAMS FOR ECG AND GSR CHANNELS
+    # SET PARAMS FOR ECG AND GSR CHANNELS
     # ECG subj1:
     self.ser.write(b'x') # activate channel settings
     time.sleep(.5)
@@ -165,7 +169,8 @@ class OpenBCIBoard(object):
     return  self.aux_channels_per_sample
 
   def data_send(self,data):
-    db.buffer(data.channel_data)
+    self.db.buffer(data)
+
   def start_streaming(self, callback, lapse=-1):
     """
     Start handling streaming data from the board. Call a provided callback
@@ -205,7 +210,6 @@ class OpenBCIBoard(object):
             call(whole_sample)
       else:
         for call in callback:
-          print('call', call)
           call(sample)
       
       if(lapse > 0 and timeit.default_timer() - start_time > lapse):
@@ -367,7 +371,6 @@ class OpenBCIBoard(object):
         c = self.ser.read().decode('utf-8')
         # print('c', c)
         line += c
-      print('end')
       print(line);
     else:
       self.warn("No Message")
@@ -581,7 +584,7 @@ class OpenBCISample(object):
     self.channel_data = channel_data;
     self.aux_data = aux_data;
 
-if __name__ == '__main__':
-  port = '/dev/ttyUSB0'
-  db = data_buffer.Data_Buffer();
-  board = OpenBCIBoard(port=port)
+# if __name__ == '__main__':
+#   port = '/dev/ttyUSB0'
+#   db = data_buffer.Data_Buffer();
+#   board = OpenBCIBoard(port=port)

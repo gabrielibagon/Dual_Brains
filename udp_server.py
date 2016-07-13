@@ -7,7 +7,6 @@ Requires:
   - websockets
 """
 import json
-import pickle
 import socket
 import numpy as np
 
@@ -38,13 +37,13 @@ class UDPServer():
     # self.send_data(json.dumps(sample))
     # print(sample.astype('str'))
     # print(type(sample))
-    sample = np.asarray(sample,dtype='int')
-    print(np.shape(sample))
+    # sample = np.asarray(sample,dtype='int')
+    # print(np.shape(sample))
     if type(sample) is list:
-      print("meep")
+      # print("meep")
       json_sample = json.dumps(sample)
     else:
-      print("beep")
+      # print("beep")
       json_sample = json.dumps(sample.tolist())
     # print(json_sample)
     self.send_data(json_sample)
