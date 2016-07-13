@@ -51,27 +51,45 @@ class Spectrogram extends Graph {
       translate(origin.x, origin.y);
       colorMode(RGB, 255,255,255,100);
       noStroke();
-      color[] swatch = {color(#010552), color(#2afd61), color(#fd85fd), color(#5582a5), color(#af1ecd), color(#ffffff), color(#2cfefd), color(#fffd76)};
+      //Swatch from Mockup
+      //color[] swatch = {color(#010552), color(#2afd61), color(#fd85fd), color(#5582a5), color(#af1ecd), color(#ffffff), color(#2cfefd), color(#fffd76)};
+      //Swatch from
+      color[] swatch = {color(#8f435c), color(#db854c), color(#e8d889), color(#ec6232), color(#facb65), color(#6b9080), color(#efd937), color(#a48269)};
+
       for (int i = 0; i < this.dataPoints; i++) {//for each channel...
         for (int j = 1; j < numOfReadingsStored; j++) {//connect every dataPoint
           //DEBUG UTIL: POINTS MODE
           float baseWave = sin(TWO_PI * j/numOfReadingsStored) * cos(millis()*0.0001);
           float alpha = map(data[i][j], upperLim, lowerLim, 20, 100) * (1.0 * (numOfReadingsStored -j)/ numOfReadingsStored);
-          strokeWeight(0.5);
-          //stroke(color(255,255,255, alpha));
-          int colorCode = floor(map(data[i][j], upperLim, lowerLim, 0, 8));
-          colorCode = constrain(colorCode, 0, 7);
-          stroke(swatch[colorCode]);
-          line( (10 * baseWave) + 4 * scale * i, 4 * scale * (j-1), 4 * scale * i, 4 * scale * j);
-          line( (10 * baseWave) + 4 * scale * (i+1), 4 * scale * j, 4 * scale * i, 4 * scale * j);
-          alpha = map(data[i][j], upperLim, lowerLim, 20, 100) * ((1.0*numOfReadingsStored-j)/numOfReadingsStored);
-          fill(color(255,255,255, alpha));
-          ellipse( (10 * baseWave) + 4 * scale * i, 4 * scale * j, 1, 1);
+          if(data[i][j] == 0.0){
+            alpha = 0; 
+          }
 
-          // stroke(color(255,255,255,20));
-          // ellipse( 4 * scale * i, 4 * scale * j, 2 * scale, 2 * scale);
-          // stroke(color(255,255,255,8));
-          // ellipse( 4 * scale * i, 4 * scale * j, 4 * scale, 4 * scale);
+          //stroke(color(255,255,255, alpha));
+          int colorCode = floor(map(data[i][j], lowerLim, upperLim, 0, 8));
+          colorCode = constrain(colorCode, 0, 7);
+
+          //Add alpha value to swatch color
+          color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.2);
+
+          stroke(c);
+          strokeCap(PROJECT);
+          strokeWeight(40 * (alpha/50));
+          line( (10 * baseWave) + 4 * scale * i + random(-3,3), 4 * scale * (j-1) + random(-3,3), 4 * scale * i + random(-3,3), 4 * scale * j + random(-3,3));
+          c = color(red(swatch[colorCode]), blue(swatch[colorCode]), green(swatch[colorCode]), alpha*0.1);
+          //HORIZONTAL LINE
+          strokeWeight(1);
+          stroke(#FFFFFF);
+          //line( (10 * baseWave) + 4 * scale * (i+1), 4 * scale * j, 4 * scale * i, 4 * scale * j);
+          // c = color(red(swatch[colorCode]), blue(swatch[colorCode]), green(swatch[colorCode]), alpha);
+          // stroke(c);
+          // strokeWeight(0.5);
+          // line( (10 * baseWave) + 4 * scale * i, 4 * scale * (j-1), 4 * scale * i, 4 * scale * j);
+          // line( (10 * baseWave) + 4 * scale * (i+1), 4 * scale * j, 4 * scale * i, 4 * scale * j);
+          // alpha = map(data[i][j], upperLim, lowerLim, 20, 100) * ((1.0*numOfReadingsStored-j)/numOfReadingsStored);
+          // fill(color(255,255,255, alpha));
+          // ellipse( (10 * baseWave) + 4 * scale * i, 4 * scale * j, 1, 1);
+
         }
       }
       popMatrix();

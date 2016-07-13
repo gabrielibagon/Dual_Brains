@@ -10,20 +10,21 @@ float[][] data_list;
 PImage mask;
 void setup() {
   size(1080, 768);
+  background(0);
   mask = loadImage("gradientmask.png");
 
   //Test Graph
   //Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, int ORIGIN_X, int ORIGIN_Y){
 
   //LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y,  boolean IS_ON_LEFT){
-  g = new LineGraph(6, 250, -250, 20, 9, 3, width*0, height*1, true);
-  g2 = new LineGraph(6, 250, -250, 20, 9, 3, width*0.5, height*1, false);
+  g = new LineGraph(6, 250, -250, 20, 9, 3, width*0, height*1.1, true);
+  g2 = new LineGraph(6, 250, -250, 20, 9, 3, width*0.5, height*1.1, false);
 
 
   //Spectrogram graph
   // Spectrogram(int DATAPOINTS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
-  s = new Spectrogram(34, 0, 10, 9, 5, 4, width*0, 20, true);
-  s2 = new Spectrogram(34, 0, 10, 9, 5, 4, width*0.5, 20, false);
+  s = new Spectrogram(32, 10, 0, 9, 5, 4.2, width*0, -20, true);
+  s2 = new Spectrogram(32, 10, 0, 9, 5, 4.2, width*0.5, -20, false);
 
   //Set DeBug to False for Gabe FrameRate Test
   g.debugMode = false;
@@ -35,12 +36,26 @@ void setup() {
 
 void draw() {
 
-  background(0);
+  if(g.debugMode == false){
+    //background(#210e25);
+    colorMode(RGB,100);
+    fill(red(#210e25),green(#210e25),blue(#210e25),5);
+    noStroke();
+    rect(0,0,width,height);
+  } else {
+    //background(0);
+    colorMode(RGB,100);
+    fill(0,0,0,70);
+    noStroke();
+    rect(0,0,width,height);
+  }
 
-  float [] newData2 = new float [512];
 
-  for (int i =0; i<512; i++) {
-    newData2[i] = random(0, 10);
+  float [] newData2 = new float[s.dataPoints];
+
+  for (int i = 0; i < s.dataPoints; i++) {
+    //newData2[i] = random(0, 11);
+    newData2[i] = random(0.0, 10.0);
   }
 
   float[] newData = {random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250)};
