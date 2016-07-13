@@ -44,7 +44,8 @@ public void setup(){
 public void draw(){
   //image(backgroundImg, width*0.5, height*0.5);
   colorMode(RGB,100);
-  fill(0,0,0,7);
+  fill(0,0,0,70);
+  noStroke();
   rect(0,0,width,height);
 
 
@@ -169,12 +170,17 @@ class Point {
     //println("Drawing to " + loc.x + ", " + loc.y);
     pushMatrix();
     translate(this.loc.x, this.loc.y);
-    rotate(random(0,TWO_PI));
+    rotate(random(0,PI*0.1f));
     //tint(opac);
-    blendMode(ADD);
+    //blendMode(ADD);
     imageMode(CENTER);
     //image(sprt, 0, 0, sizeX, sizeY);
-    image(sprt2, 0, 0, sizeX, sizeY);
+    //image(sprt2, 0, 0, sizeX, sizeY);
+    strokeCap(PROJECT);
+    strokeWeight(60);
+    colorMode(ARGB, 255,255,255,100);
+    stroke(color(255,255,255,5*random(0,1)));
+    line(-5,0,5,0);
     //image(sprt, this.loc.x, this.loc.y, sizeX, sizeY);
     popMatrix();
   }

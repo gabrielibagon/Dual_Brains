@@ -28,7 +28,8 @@ void setup(){
 void draw(){
   //image(backgroundImg, width*0.5, height*0.5);
   colorMode(RGB,100);
-  fill(0,0,0,7);
+  fill(0,0,0,70);
+  noStroke();
   rect(0,0,width,height);
 
 
