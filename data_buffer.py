@@ -4,69 +4,35 @@ import filters
 import time
 import csv
 import numpy as np
-import ecg_analysis
 import open_bci_v3 as bci
 import udp_server
 
 class Data_Buffer():
 
 	def __init__(self):
-		#subj1 objects
-		global filt_subj1
-		filt = filters.Filters()
-		#subj2 objects
-		# global filt_subj2
-		# filt_subj2 = filters.Filters()
-
-		#instantiate EEG and ECG lists for subj1 and subj2
-		self.subj1_EEG = []
-		self.subj1_ECG = []
-		self.subj2_EEG = []
-		self.subj2_ECG = []
-
-		self.data_buffer = [] #this will hold the raw data
-
+		self.filt = filters.Filters()
+		self.data_buffer = []
 		self.count = 0
-
 		self.udp_packet = []
-
 
 	def buffer(self,sample):
 		count = 0;
 		if sample and ((count%20) == 0):
-			# SUBJECT 1
-			## EEG DATA
-			### Filtered
-			# subj1_EEG = filt_subj1.filter_data(sample.channel_data[1:7]) #real data
 			EEG = []
-			EEG = filt.filter_data(sample.channel_data) #fake data
-			# print(subj1_EEG)
-			### FFT
-			# subj1_FFT = filt_subj1.fft_receive(sample.channel_data[1:7])
-			# subj1_FFT = filt_subj1.fft_receive(sample[0:6])
+			EEG = self.filt.filter_data(sample.channel_data)
+			send = []
 
-			# ECG Data
-			# subj1_beat = ecg_subj1.filter_data(sample[7])
-
-			# SUBJECT 2
-			## EEG Data
-				# print(np.shape(subj1_EEG))
-				# print(subj1_EEG)
-			if subj1_EEG is not None:
-				send = [EEG, FFT]
-				# subj2_sample = subj1_sample; #CHANGE THIS FOR REAL EXPERIMENT
-				# EEG_send = np.concatenate((subj1_sample,subj2_sample), axis=0)
-				# if self.count%60 is 0:
-				# 	self.upd_packet.append(1)
-				# else:
-				# 	self.upd_packet.append(0)
-				# print(EEG_send)
-					# print(len(subj1_EEG))
-				udp.receive(EEG_send)
+			if EEG is not None:
+				uv = EEG[0]
+				fft = EEG[1]
+				for chan in uv:
+					send.append(chan[0])
+				for chan in fft:
+					for pt in  chan:
+						send.append(pt)
+				print(np.shape(send))
+				udp.receive(send)
 		self.count = self.count+1
-
-
-
 
 def main():
 

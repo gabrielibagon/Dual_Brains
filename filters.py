@@ -22,12 +22,10 @@ class Filters:
 		f_high = 13
 		f_low = 2
 		wn = [59,61]       #Nyquist filter window
-
-		# filter coefficients
 		self.low_pass_coefficients = signal.butter(filter_order,f_high/fn, 'low')
 		self.high_pass_coefficients = signal.butter(filter_order,f_low/fn, 'high')
 		self.notch_coefficients = signal.butter(4,[x/fn for x in wn], 'stop')
-		self.filtered_eeg = np.empty([14,256])
+		self.filtered_eeg = np.empty([16,256])
 
 
 	def filter_data(self,sample):
@@ -42,13 +40,12 @@ class Filters:
 			data = data.astype(np.float)
 			filtered_eeg = self.noise_filters(data)
 			fft = self.fft_filter(data)
-			return filtered_eeg
+			return [filtered_eeg, fft]
 
 	def noise_filters(self,data):
 		[b1, a1] = [self.high_pass_coefficients[0],self.high_pass_coefficients[1]]
 		[b, a] = [self.low_pass_coefficients[0],self.low_pass_coefficients[1]]
 		[bn, an] = [self.notch_coefficients[0],self.notch_coefficients[1]]
-
 
 
 		notched = []
@@ -65,8 +62,12 @@ class Filters:
 
 	def fft_filter(self,data):
 		# print(np.shape(data))
+		fft = np.empty([16,129])
 		for i,channel in enumerate(data):
 			#FFT ALGORITHM
-			fft = np.fft.rfft(channel)
-			fft_send[i] = fft
+			temp_fft = np.fft.fft(channel)
+			temp_fft = np.abs(temp_fft/len(channel))
+			temp_fft = temp_fft[0:(len(channel)/2 + 1)]
+			temp_fft[1:len(temp_fft)] = 2*temp_fft[1:len(temp_fft)]
+			fft[i] = temp_fft
 		return fft
