@@ -17,11 +17,10 @@ class Graph {
   PVector origin;
   float upperLim;
   float lowerLim;
-
-  Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y, float UPPER_LIM, float LOWER_LIM) {
+  Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y, float UPPER_LIM, float LOWER_LIM, boolean IS_ON_LEFT) {
     this.show = true;
     this.debugMode = true;
-    this.screenLeft = true;
+    this.screenLeft = IS_ON_LEFT;
     this.sampleRate = SAMPLE_RATE;
     this.timeWindow = TIME_WINDOW;
     this.scale = SCALE;
