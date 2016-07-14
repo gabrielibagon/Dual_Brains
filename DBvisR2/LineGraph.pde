@@ -60,7 +60,7 @@ class LineGraph extends Graph {
         translate(origin.x, origin.y);
         noFill();
 
-        //strokeCap(PROJECT);
+        strokeCap(PROJECT);
         strokeWeight(3);
         //color[] cs = {color(#A4036F), color(#048BA8), color(#16DB93), color(#EFEA5A), color(#F29E4C), color(#50D0ED)};
         //Swatch from Mockup
@@ -90,22 +90,22 @@ class LineGraph extends Graph {
               int colorCode = floor(map(data[i][j], lowerLim, upperLim, 0, 8));
               colorCode = constrain(colorCode, 0, 7);
               //Add alpha value to swatch color
-              color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.1);
+              color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
               stroke(c);
-              strokeWeight(70);
+              strokeWeight(35);
               line(scale * (j-1) ,
-                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
                   scale * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
 
-              strokeWeight(12);
-              stroke(color(255,255,255,alpha*0.4));
+              strokeWeight(3);
+              stroke(color(255,255,255,alpha*0.3));
               //c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
               //stroke(c);
               line(scale * (j-1) ,
-                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 7 * scale, -7 * scale) ,
                   scale * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 7 * scale, -7 * scale) );
 
               // strokeWeight(3);
               // //stroke(color(255,255,255,40));
@@ -122,13 +122,13 @@ class LineGraph extends Graph {
               // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
               //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale), 30, 30);
 
-              strokeWeight(1);
+              strokeWeight(0.5);
               //stroke(cs[i]);
               stroke(#FFFFFF);
               line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 6 * scale, -6 * scale) ,
                   (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 6 * scale, -6 * scale) );
             }
         }
       popMatrix();

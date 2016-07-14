@@ -8,12 +8,16 @@ LineGraph g, g2;
 Spectrogram s, s2;
 float[][] data_list;
 PImage mask;
+PImage backgroundImg;
+
 void setup() {
   //size(1080, 768);
   frameRate(24);
   size(640, 480, P3D);
   background(0);
   mask = loadImage("gradientmask.png");
+  backgroundImg = loadImage("mockup_640.jpg");
+
 
   //Test Graph
   //Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, int ORIGIN_X, int ORIGIN_Y){
@@ -25,8 +29,8 @@ void setup() {
 
   //Spectrogram graph
   // Spectrogram(int DATAPOINTS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
-  s = new Spectrogram(32, 10, 0, 9, 5, 2.2, width*0, -20, true);
-  s2 = new Spectrogram(32, 10, 0, 9, 5, 2.2, width*0.5, -20, false);
+  s = new Spectrogram(32, 10, 0, 9, 4, 2.2, width*0, -20, true);
+  s2 = new Spectrogram(32, 10, 0, 9, 4, 2.2, width*0.5, -20, false);
 
   //Set DeBug to False for Gabe FrameRate Test
   g.debugMode = false;
@@ -37,11 +41,12 @@ void setup() {
 }
 
 void draw() {
+  image(backgroundImg, 0, 0, width, height);
 
   if(g.debugMode == false){
     //background(#210e25);
     colorMode(RGB,100);
-    fill(red(#210e25),green(#210e25),blue(#210e25),5);
+    fill(red(#210e25),green(#210e25),blue(#210e25),80);
     noStroke();
     rect(0,0,width,height);
   } else {
@@ -61,15 +66,19 @@ void draw() {
   }
 
   float[] newData = {random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250)};
+
   g.update(newData);
-  g.render();
   g2.update(newData);
+
+  g.render();
   g2.render();
 
   s.update(newData2);
-  s.render();
   s2.update(newData2);
+
+  s.render();
   s2.render();
+  tint(255,255);
   //image(mask, 0, 0, width, height);
 
   fill(color(#FFFFFF));

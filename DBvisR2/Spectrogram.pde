@@ -73,12 +73,16 @@ class Spectrogram extends Graph {
           color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.2);
 
           stroke(c);
-          //strokeCap(PROJECT);
-          strokeWeight(40 * (alpha/50));
-          line( (10 * baseWave) + 4 * scale * i + random(-3,3), 4 * scale * (j-1) + random(-3,3), 4 * scale * i + random(-3,3), 4 * scale * j + random(-3,3));
+          strokeCap(PROJECT);
+          strokeWeight(20 * (alpha/50));
+
+          line( (10 * baseWave) + 5 * scale * i + 3 * cos(millis()*0.0001),
+                4 * scale * (j-1) + 3 * cos(millis()*0.0001),
+                5 * scale * i + 3 * cos(millis()*0.0001),
+                4 * scale * j + 3 * cos(millis()*0.0001) );
           c = color(red(swatch[colorCode]), blue(swatch[colorCode]), green(swatch[colorCode]), alpha*0.1);
           //HORIZONTAL LINE
-          strokeWeight(1);
+          strokeWeight(0.5);
           stroke(#FFFFFF);
           //line( (10 * baseWave) + 4 * scale * (i+1), 4 * scale * j, 4 * scale * i, 4 * scale * j);
           // c = color(red(swatch[colorCode]), blue(swatch[colorCode]), green(swatch[colorCode]), alpha);
