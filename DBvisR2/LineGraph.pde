@@ -2,13 +2,14 @@ class LineGraph extends Graph {
   int channels;
   float[][] data;
   int numOfReadingsStored;
+  boolean inverse = false;
 
-
-  LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y,  boolean IS_ON_LEFT) {
+  LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y, boolean IS_ON_LEFT) {
     super(SAMPLE_RATE, TIME_WINDOW, SCALE, ORIGIN_X, ORIGIN_Y, UPPER_LIM, LOWER_LIM, IS_ON_LEFT);
     this.channels = CHANNELS;
     this.numOfReadingsStored = int(SAMPLE_RATE * TIME_WINDOW);
     data = new float[CHANNELS][numOfReadingsStored];
+    inverse = !IS_ON_LEFT;
   }
 
   void update(float[] newData) { //Read in new data
@@ -23,32 +24,32 @@ class LineGraph extends Graph {
     }
   }
 
-  void render(){
-
-    if(debugMode){
+  void render() {
+int direction = 1;
+    if (inverse) direction =-1;
+    if (debugMode) {
       super.render();
       //-----------------------
       //DEBUG MODE RENDER:
       //-----------------------
       pushMatrix();
-        translate(origin.x, origin.y);
-        noFill();
-        strokeWeight(0.5);
-        stroke(#FF0000);
-        for(int i = 0; i < this.channels; i++){//for each channel...
-          for(int j = 1; j < numOfReadingsStored; j++){//connect every point
+      translate(origin.x, origin.y);
+      noFill();
+      strokeWeight(0.5);
+      stroke(#FF0000);
+      for (int i = 0; i < this.channels; i++) {//for each channel...
+        for (int j = 1; j < numOfReadingsStored; j++) {//connect every point
 
-            //DEBUG UTIL: POINTS MODE
-              // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
+          //DEBUG UTIL: POINTS MODE
+          // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+          //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
 
-            //DEBUG UTIL: LINE MODE
-              line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 5 * scale, -5 * scale) ,
-                  (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale) );
-            }
-        }
+          line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1)*direction, 
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 5 * scale, -5 * scale), 
+            (sampleRate * timeWindow * scale)/numOfReadingsStored * j*direction, 
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale) );
+          }
+      }
       popMatrix();
     } else {
       //-----------------------
@@ -57,83 +58,81 @@ class LineGraph extends Graph {
       //blendMode(DIFFERENCE);
       pushMatrix();
 
-        translate(origin.x, origin.y);
-        noFill();
+      translate(origin.x, origin.y);
+      noFill();
 
-        strokeCap(PROJECT);
-        strokeWeight(3);
-        //color[] cs = {color(#A4036F), color(#048BA8), color(#16DB93), color(#EFEA5A), color(#F29E4C), color(#50D0ED)};
-        //Swatch from Mockup
-        color[] swatch = {color(#010552), color(#2afd61), color(#fd85fd), color(#5582a5), color(#af1ecd), color(#ffffff), color(#2cfefd), color(#fffd76)};
-        //color[] swatch = {color(#8f435c), color(#db854c), color(#e8d889), color(#ec6232), color(#facb65), color(#6b9080), color(#efd937), color(#a48269)};
-
-
-        for(int i = this.channels-1; i >= 0; i--){//for each channel...
-          for(int j = 1; j < numOfReadingsStored; j++){//connect every point
-
-            //DEBUG UTIL: POINTS MODE
-              // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
-
-            //DEBUG UTIL: LINE MODE
-              float baseWave = sin(TWO_PI * j/numOfReadingsStored) * cos(millis()*0.0001);
-              colorMode(RGB, 255,255,255,100);
+      strokeCap(PROJECT);
+      strokeWeight(3);
+      //color[] cs = {color(#A4036F), color(#048BA8), color(#16DB93), color(#EFEA5A), color(#F29E4C), color(#50D0ED)};
+      //Swatch from Mockup
+      color[] swatch = {color(#010552), color(#2afd61), color(#fd85fd), color(#5582a5), color(#af1ecd), color(#ffffff), color(#2cfefd), color(#fffd76)};
+      //color[] swatch = {color(#8f435c), color(#db854c), color(#e8d889), color(#ec6232), color(#facb65), color(#6b9080), color(#efd937), color(#a48269)};
 
 
+      for (int i = this.channels-1; i >= 0; i--) {//for each channel...
+        for (int j = 1; j < numOfReadingsStored; j++) {//connect every point
 
-              //Calculate alpha
-              float alpha = map(data[i][j], upperLim, lowerLim, 20, 100) * (1.0 * (numOfReadingsStored -j)/ numOfReadingsStored);
-              if(data[i][j] == 0.0){
-                alpha = 0;
-              }
-              //stroke(color(255,255,255,5));
-              int colorCode = floor(map(data[i][j], lowerLim, upperLim, 0, 8));
-              colorCode = constrain(colorCode, 0, 7);
-              //Add alpha value to swatch color
-              color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
-              stroke(c);
-              strokeWeight(35);
-              line(scale * (j-1) ,
-                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
-                  scale * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+          //DEBUG UTIL: POINTS MODE
+          // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+          //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
 
-              strokeWeight(3);
-              stroke(color(255,255,255,alpha*0.3));
-              //c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
-              //stroke(c);
-              line(scale * (j-1) ,
-                  (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 7 * scale, -7 * scale) ,
-                  scale * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 7 * scale, -7 * scale) );
-
-              // strokeWeight(3);
-              // //stroke(color(255,255,255,40));
-              // c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.4);
-              // stroke(c);
-              // line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
-              //     (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+          //DEBUG UTIL: LINE MODE
+          float baseWave = sin(TWO_PI * j/numOfReadingsStored) * cos(millis()*0.0001);
+          colorMode(RGB, 255, 255, 255, 100);
 
 
-              //noStroke();
-              //fill(color(255,255,255,10));
-              // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale), 30, 30);
 
-              strokeWeight(0.5);
-              //stroke(cs[i]);
-              stroke(#FFFFFF);
-              line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 6 * scale, -6 * scale) ,
-                  (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 6 * scale, -6 * scale) );
-            }
+          //Calculate alpha
+          float alpha = map(data[i][j], upperLim, lowerLim, 20, 100) * (1.0 * (numOfReadingsStored -j)/ numOfReadingsStored);
+          if (data[i][j] == 0.0) {
+            alpha = 0;
+          }
+          //stroke(color(255,255,255,5));
+          int colorCode = floor(map(data[i][j], lowerLim, upperLim, 0, 8));
+          colorCode = constrain(colorCode, 0, 7);
+          //Add alpha value to swatch color
+          color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
+          stroke(c);
+          strokeWeight(35);
+          line(scale * (j-1)*direction, 
+            (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale), 
+            scale * j*direction, 
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+
+          strokeWeight(3);
+          stroke(color(255, 255, 255, alpha*0.3));
+          //c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
+          //stroke(c);
+          line(scale * (j-1)*direction, 
+            (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 7 * scale, -7 * scale), 
+            scale * j*direction, 
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 7 * scale, -7 * scale) );
+
+          // strokeWeight(3);
+          // //stroke(color(255,255,255,40));
+          // c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.4);
+          // stroke(c);
+          // line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+          //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+          //     (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
+          //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+
+
+          //noStroke();
+          //fill(color(255,255,255,10));
+          // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+          //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale), 30, 30);
+
+          strokeWeight(0.5);
+          //stroke(cs[i]);
+          stroke(#FFFFFF);
+          line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1)*direction, 
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 6 * scale, -6 * scale), 
+            (sampleRate * timeWindow * scale)/numOfReadingsStored * j*direction, 
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 6 * scale, -6 * scale) );
         }
+      }
       popMatrix();
     }
   }
-
-
 }
