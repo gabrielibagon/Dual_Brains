@@ -25,13 +25,17 @@ class Data_Buffer():
 			if (EEG is not None) and (count%4==0):
 				uv = EEG[0]
 				fft = EEG[1]
+				fft1 = fft[0,10:42]
+				fft2 = fft[9,10:42]
+
 				for chan in uv:
 					send.append(chan[0])
-				for chan in fft:
-					for pt in  chan:
-						send.append(pt)
+				for pt in fft1:
+					send.append(pt)
+				for pt in fft2:
+					send.append(pt)
 				print(np.shape(send))
-				print(fft)
+				print(send)
 				udp.receive(send)
 
 		# DATA FORMAT
