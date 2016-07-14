@@ -52,9 +52,9 @@ class Spectrogram extends Graph {
       colorMode(RGB, 255,255,255,100);
       noStroke();
       //Swatch from Mockup
-      //color[] swatch = {color(#010552), color(#2afd61), color(#fd85fd), color(#5582a5), color(#af1ecd), color(#ffffff), color(#2cfefd), color(#fffd76)};
+      color[] swatch = {color(#010552), color(#2afd61), color(#fd85fd), color(#5582a5), color(#af1ecd), color(#ffffff), color(#2cfefd), color(#fffd76)};
       //Swatch from
-      color[] swatch = {color(#8f435c), color(#db854c), color(#e8d889), color(#ec6232), color(#facb65), color(#6b9080), color(#efd937), color(#a48269)};
+      //color[] swatch = {color(#8f435c), color(#db854c), color(#e8d889), color(#ec6232), color(#facb65), color(#6b9080), color(#efd937), color(#a48269)};
 
       for (int i = 0; i < this.dataPoints; i++) {//for each channel...
         for (int j = 1; j < numOfReadingsStored; j++) {//connect every dataPoint
@@ -73,14 +73,14 @@ class Spectrogram extends Graph {
           color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.2);
 
           stroke(c);
-          strokeCap(PROJECT);
-          strokeWeight(20 * (alpha/50));
 
-          line( (10 * baseWave) + 5 * scale * i + 3 * cos(millis()*0.0001),
+          strokeWeight(20 * (alpha*0.05));
+
+          line( 5 * scale * (i-1) + 3 * cos(millis()*0.0001),
                 4 * scale * (j-1) + 3 * cos(millis()*0.0001),
-                5 * scale * i + 3 * cos(millis()*0.0001),
-                4 * scale * j + 3 * cos(millis()*0.0001) );
-          c = color(red(swatch[colorCode]), blue(swatch[colorCode]), green(swatch[colorCode]), alpha*0.1);
+                5 * scale * i + 3 * sin(millis()*0.0001),
+                (4 * scale * j + 3 * cos(millis()*0.0001)) * ((numOfReadingsStored-j)/numOfReadingsStored) );
+          c = color(red(swatch[colorCode]) * alpha/100, blue(swatch[colorCode])  * alpha/100, green(swatch[colorCode]), alpha*0.1);
           //HORIZONTAL LINE
           strokeWeight(0.5);
           stroke(#FFFFFF);

@@ -67,6 +67,7 @@ class LineGraph extends Graph {
         color[] swatch = {color(#010552), color(#2afd61), color(#fd85fd), color(#5582a5), color(#af1ecd), color(#ffffff), color(#2cfefd), color(#fffd76)};
         //color[] swatch = {color(#8f435c), color(#db854c), color(#e8d889), color(#ec6232), color(#facb65), color(#6b9080), color(#efd937), color(#a48269)};
 
+        beginShape();
 
         for(int i = this.channels-1; i >= 0; i--){//for each channel...
           for(int j = 1; j < numOfReadingsStored; j++){//connect every point
@@ -82,7 +83,7 @@ class LineGraph extends Graph {
 
 
               //Calculate alpha
-              float alpha = map(data[i][j], upperLim, lowerLim, 20, 100) * (1.0 * (numOfReadingsStored -j)/ numOfReadingsStored);
+              float alpha = map(data[i][j], upperLim, lowerLim, 0, 100) * ((1.0*numOfReadingsStored-j)/numOfReadingsStored);
               if(data[i][j] == 0.0){
                 alpha = 0;
               }
@@ -90,16 +91,18 @@ class LineGraph extends Graph {
               int colorCode = floor(map(data[i][j], lowerLim, upperLim, 0, 8));
               colorCode = constrain(colorCode, 0, 7);
               //Add alpha value to swatch color
-              color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
+              //color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
+              //select color by channel
+              color c = color(red(swatch[i]), green(swatch[i]), blue(swatch[i]), alpha*0.1);
               stroke(c);
-              strokeWeight(35);
-              line(scale * (j-1) ,
+              strokeWeight(55*(channels-i)/channels);
+              line(-10 + scale * (j-1) ,
                   (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
                   scale * j,
                   (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 15) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
 
-              strokeWeight(3);
-              stroke(color(255,255,255,alpha*0.3));
+              strokeWeight(9);
+              stroke(color(255,255,255,alpha*0.1));
               //c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
               //stroke(c);
               line(scale * (j-1) ,
@@ -107,14 +110,14 @@ class LineGraph extends Graph {
                   scale * j,
                   (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 7 * scale, -7 * scale) );
 
-              // strokeWeight(3);
-              // //stroke(color(255,255,255,40));
-              // c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.4);
-              // stroke(c);
-              // line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
-              //     (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
+              strokeWeight(4);
+              //stroke(color(255,255,255,40));
+              c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.3);
+              stroke(c);
+              line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale) ,
+                  (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
+                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 1 * scale, -1 * scale) );
 
 
               //noStroke();
@@ -122,9 +125,9 @@ class LineGraph extends Graph {
               // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
               //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 1 * scale, -1 * scale), 30, 30);
 
-              strokeWeight(0.5);
+              strokeWeight(1);
               //stroke(cs[i]);
-              stroke(#FFFFFF);
+              stroke(color(255,255,255,alpha));
               line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
                   (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j-1], upperLim, lowerLim, 6 * scale, -6 * scale) ,
                   (sampleRate * timeWindow * scale)/numOfReadingsStored * j,

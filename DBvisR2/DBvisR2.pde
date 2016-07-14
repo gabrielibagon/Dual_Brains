@@ -10,22 +10,20 @@ float[][] data_list;
 PImage mask;
 PImage backgroundImg;
 
+
 void setup() {
   //size(1080, 768);
   frameRate(24);
   size(640, 480, P3D);
   background(0);
   mask = loadImage("gradientmask.png");
-  backgroundImg = loadImage("mockup_640.jpg");
-
+  backgroundImg = loadImage("GradientBackground-640.jpg");
 
   //Test Graph
   //Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, int ORIGIN_X, int ORIGIN_Y){
-
   //LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y,  boolean IS_ON_LEFT){
   g = new LineGraph(6, 250, -250, 20, 9, 2, width*0, height*1.1, true);
   g2 = new LineGraph(6, 250, -250, 20, 9, 2, width*0.5, height*1.1, false);
-
 
   //Spectrogram graph
   // Spectrogram(int DATAPOINTS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
@@ -37,8 +35,8 @@ void setup() {
   s.debugMode = false;
   g2.debugMode = false;
   s2.debugMode = false;
-  
-   
+
+
   //***********************************
   //NETWORKING
   //THIS MUST BE INCLUDED IN YOUR SETUP
@@ -104,7 +102,6 @@ void mousePressed(){
 
 // **********************************************************
 // NETWORKING
-
 import hypermedia.net.*;
 import java.util.Scanner;
 int PORT_RX=6100; //port
