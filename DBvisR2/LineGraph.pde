@@ -2,13 +2,14 @@ class LineGraph extends Graph {
   int channels;
   float[][] data;
   int numOfReadingsStored;
+  boolean inverse = false;
 
-
-  LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y,  boolean IS_ON_LEFT) {
+  LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y, boolean IS_ON_LEFT) {
     super(SAMPLE_RATE, TIME_WINDOW, SCALE, ORIGIN_X, ORIGIN_Y, UPPER_LIM, LOWER_LIM, IS_ON_LEFT);
     this.channels = CHANNELS;
     this.numOfReadingsStored = int(SAMPLE_RATE * TIME_WINDOW);
     data = new float[CHANNELS][numOfReadingsStored];
+    inverse = !IS_ON_LEFT;
   }
 
   void update(float[] newData) { //Read in new data
@@ -23,32 +24,32 @@ class LineGraph extends Graph {
     }
   }
 
-  void render(){
-
-    if(debugMode){
+  void render() {
+int direction = 1;
+    if (inverse) direction =-1;
+    if (debugMode) {
       super.render();
       //-----------------------
       //DEBUG MODE RENDER:
       //-----------------------
       pushMatrix();
-        translate(origin.x, origin.y);
-        noFill();
-        strokeWeight(0.5);
-        stroke(#FF0000);
-        for(int i = 0; i < this.channels; i++){//for each channel...
-          for(int j = 1; j < numOfReadingsStored; j++){//connect every point
+      translate(origin.x, origin.y);
+      noFill();
+      strokeWeight(0.5);
+      stroke(#FF0000);
+      for (int i = 0; i < this.channels; i++) {//for each channel...
+        for (int j = 1; j < numOfReadingsStored; j++) {//connect every point
 
-            //DEBUG UTIL: POINTS MODE
-              // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-              //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
+          //DEBUG UTIL: POINTS MODE
+          // ellipse((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
+          //     (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale),1,1);
 
-            //DEBUG UTIL: LINE MODE
-              line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1) ,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 5 * scale, -5 * scale) ,
-                  (sampleRate * timeWindow * scale)/numOfReadingsStored * j,
-                  (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale) );
-            }
-        }
+          line((sampleRate * timeWindow * scale)/numOfReadingsStored * (j-1)*direction,
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j-1], upperLim, lowerLim, 5 * scale, -5 * scale),
+            (sampleRate * timeWindow * scale)/numOfReadingsStored * j*direction,
+            (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + map(data[i][j], upperLim, lowerLim, 5 * scale, -5 * scale) );
+          }
+      }
       popMatrix();
     } else {
       //-----------------------
@@ -134,9 +135,8 @@ class LineGraph extends Graph {
                   (-1 * sampleRate * timeWindow * scale) / (channels+1) * (i+1) + (baseWave * i * 10) + map(data[i][j], upperLim, lowerLim, 6 * scale, -6 * scale) );
             }
         }
+      }
       popMatrix();
     }
   }
-
-
 }

@@ -23,7 +23,7 @@ void setup() {
   //Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, int ORIGIN_X, int ORIGIN_Y){
   //LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y,  boolean IS_ON_LEFT){
   g = new LineGraph(6, 250, -250, 20, 9, 2, width*0, height*1.1, true);
-  g2 = new LineGraph(6, 250, -250, 20, 9, 2, width*0.5, height*1.1, false);
+  g2 = new LineGraph(6, 250, -250, 20, 9, 2, width, height*1.1, false);
 
   //Spectrogram graph
   // Spectrogram(int DATAPOINTS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
