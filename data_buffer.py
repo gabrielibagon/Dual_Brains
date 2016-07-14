@@ -17,12 +17,12 @@ class Data_Buffer():
 
 	def buffer(self,sample):
 		count = 0;
-		if sample and ((count%20) == 0):
+		if sample and ((count%8) == 0):
 			EEG = []
 			EEG = self.filt.filter_data(sample.channel_data)
 			send = []
 
-			if EEG is not None:
+			if (EEG is not None) and (count%4==0):
 				uv = EEG[0]
 				fft = EEG[1]
 				for chan in uv:
@@ -31,7 +31,18 @@ class Data_Buffer():
 					for pt in  chan:
 						send.append(pt)
 				print(np.shape(send))
+				print(fft)
 				udp.receive(send)
+
+		# DATA FORMAT
+		# FIRST 18 values are from the raw voltage
+		# 0-5: subj 1 eeg
+		# 6: subj 1 ecg
+		# 7: null
+		# 8-13: subj2 eeg
+		# 14: subj2 ecg
+		# 15: null
+		# 16-2080: channels 0-5 and 8-13 fft data (129 points per channel)
 		self.count = self.count+1
 
 def main():
@@ -43,6 +54,11 @@ def main():
 	db = Data_Buffer()
 	board = bci.OpenBCIBoard(port='/dev/ttyUSB0', send=db)
 	board.start_streaming(db.buffer)
+
+	################################
+	#
+	# SIMULATION VERSION
+	#
 
 	# channel_data = []
 	# with open('aaron_test_data/latest_trials/trial2.txt', 'r') as file:

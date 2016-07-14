@@ -1,11 +1,3 @@
-"""A server that handles a connection with an OpenBCI board and serves that
-data over both a UDP socket server and a WebSocket server.
-
-Requires:
-  - pyserial
-  - asyncio
-  - websockets
-"""
 import json
 import socket
 import numpy as np
