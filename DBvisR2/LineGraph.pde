@@ -60,7 +60,7 @@ class LineGraph extends Graph {
         translate(origin.x, origin.y);
         noFill();
 
-        strokeCap(PROJECT);
+        //strokeCap(PROJECT);
         strokeWeight(3);
         //color[] cs = {color(#A4036F), color(#048BA8), color(#16DB93), color(#EFEA5A), color(#F29E4C), color(#50D0ED)};
         //Swatch from Mockup

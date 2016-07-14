@@ -62,7 +62,7 @@ class Spectrogram extends Graph {
           float baseWave = sin(TWO_PI * j/numOfReadingsStored) * cos(millis()*0.0001);
           float alpha = map(data[i][j], upperLim, lowerLim, 20, 100) * (1.0 * (numOfReadingsStored -j)/ numOfReadingsStored);
           if(data[i][j] == 0.0){
-            alpha = 0; 
+            alpha = 0;
           }
 
           //stroke(color(255,255,255, alpha));
@@ -73,7 +73,7 @@ class Spectrogram extends Graph {
           color c = color(red(swatch[colorCode]), green(swatch[colorCode]), blue(swatch[colorCode]), alpha*0.2);
 
           stroke(c);
-          strokeCap(PROJECT);
+          //strokeCap(PROJECT);
           strokeWeight(40 * (alpha/50));
           line( (10 * baseWave) + 4 * scale * i + random(-3,3), 4 * scale * (j-1) + random(-3,3), 4 * scale * i + random(-3,3), 4 * scale * j + random(-3,3));
           c = color(red(swatch[colorCode]), blue(swatch[colorCode]), green(swatch[colorCode]), alpha*0.1);
