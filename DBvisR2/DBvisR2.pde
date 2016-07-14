@@ -75,14 +75,14 @@ void draw() {
 
   float[] newData = {random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250)};
 
-  g.update(newData);
-  g2.update(newData);
+  g.update(subj1_eeg);
+  g2.update(subj2_eeg);
 
   g.render();
   g2.render();
 
-  s.update(newData2);
-  s2.update(newData2);
+  s.update(subj1_fft);
+  s2.update(subj2_fft);
 
   s.render();
   s2.render();
