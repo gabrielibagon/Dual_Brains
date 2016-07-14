@@ -37,6 +37,16 @@ void setup() {
   s.debugMode = false;
   g2.debugMode = false;
   s2.debugMode = false;
+  
+   
+  //***********************************
+  //NETWORKING
+  //THIS MUST BE INCLUDED IN YOUR SETUP
+  udp= new UDP(this,PORT_RX,HOST_IP);
+  udp.log(true);
+  udp.listen(true);
+  super.start();
+  //***********************************
 
 }
 
@@ -90,4 +100,45 @@ void mousePressed(){
   s.debugMode = !s.debugMode;
   g2.debugMode = !g2.debugMode;
   s2.debugMode = !s2.debugMode;
+}
+
+// **********************************************************
+// NETWORKING
+
+import hypermedia.net.*;
+import java.util.Scanner;
+int PORT_RX=6100; //port
+String HOST_IP="127.0.0.1"; //
+UDP udp;
+String receivedFromUDP = "";
+
+void receive(byte[] received_data) {
+  receivedFromUDP ="";
+  String data = new String(received_data);
+  String[] items = data.replaceAll("\\[","").replaceAll("\\]","").split(",");
+  data_list = new float[12][items.length/12];
+  float[] subj1_eeg = new float[6];
+  float[] subj1_heart = new float[1];
+  float[] subj2_eeg = new float[6];
+  float[] subj2_heart = new float[1];
+  float[] subj1_fft = new float[32];
+  float[] subj2_fft = new float[32];
+  println(items.length);
+  for (int i = 0; i<items.length; i++){
+    println(items[i]);
+  }
+  for (int i = 0; i<6;i++){
+    subj1_eeg[i] = Float.parseFloat(items[i]);
+  }
+  subj1_heart[0] = Float.parseFloat(items[7]);
+  for (int i =0;i<6;i++){
+    subj2_eeg[i] = Float.parseFloat(items[i+7]);
+  }
+  subj2_heart[0] = Float.parseFloat(items[14]);
+  for (int i=0;i<32;i++){
+    subj1_fft[i] = Float.parseFloat(items[i+15]);
+  }
+  for (int i=0;i<32;i++){
+    subj2_fft[i] = Float.parseFloat(items[i+48]);
+  }
 }
