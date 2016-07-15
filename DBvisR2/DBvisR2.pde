@@ -9,7 +9,12 @@ Spectrogram s, s2;
 float[][] data_list;
 PImage mask;
 PImage backgroundImg;
-
+float[] subj1_eeg;
+float[] subj1_heart;
+float[] subj2_eeg;
+float[] subj2_heart;
+float[] subj1_fft;
+float[] subj2_fft;
 
 void setup() {
   //size(1080, 768);
@@ -117,12 +122,12 @@ void receive(byte[] received_data) {
   String data = new String(received_data);
   String[] items = data.replaceAll("\\[","").replaceAll("\\]","").split(",");
   data_list = new float[12][items.length/12];
-  float[] subj1_eeg = new float[6];
-  float[] subj1_heart = new float[1];
-  float[] subj2_eeg = new float[6];
-  float[] subj2_heart = new float[1];
-  float[] subj1_fft = new float[32];
-  float[] subj2_fft = new float[32];
+  subj1_eeg = new float[6];
+  subj1_heart = new float[1];
+  subj2_eeg = new float[6];
+  subj2_heart = new float[1];
+  subj1_fft = new float[32];
+  subj2_fft = new float[32];
   println(items.length);
   for (int i = 0; i<items.length; i++){
     println(items[i]);
