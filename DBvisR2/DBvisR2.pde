@@ -89,19 +89,19 @@ void draw() {
   }
 
   if(handsTouching && frameCount % 10 == 0){
-    spawnLeft(newData3, -250, 250);
-    spawnRight(newData3, -250, 250);
+    spawnLeft(subj1_heart, -250, 250);
+    spawnRight(subj2_heart, -250, 250);
   }
 
 
-  g.update(newData);
-  g2.update(newData);
+  g.update(subj1_eeg);
+  g2.update(subj2_eeg);
 
   g.render();
   g2.render();
 
-  s.update(newData2);
-  s2.update(newData2);
+  s.update(subj1_fft);
+  s2.update(subj2_fft);
 
   s.render();
   s2.render();
