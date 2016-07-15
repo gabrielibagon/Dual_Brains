@@ -22,8 +22,9 @@ float[] subj2_fft;
 
 void setup() {
   //size(1080, 768);
-  frameRate(24);
-  size(640, 480, P3D);
+  frameRate(20);
+  fullScreen(P3D);
+  //size(640, 480, P3D);
   background(0);
   backgroundImg = loadImage("GradientBackground-640.jpg");
 
@@ -36,13 +37,13 @@ void setup() {
   //Test Graph
   //Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, int ORIGIN_X, int ORIGIN_Y){
   //LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y,  boolean IS_ON_LEFT){
-  g = new LineGraph(6, 250, -250, 20, 9, 2, width*0 - 20, height*1.05, true);
-  g2 = new LineGraph(6, 250, -250, 20, 9, 2, width*0.5 - 20, height*1.05, false);
+  g = new LineGraph(6, 250, -250, 20, 9, width*0.003, width*0 - 20, height*1.05, true);
+  g2 = new LineGraph(6, 250, -250, 20, 9, width*0.003, width*0.5 - 20, height*1.05, false);
 
   //Spectrogram graph
   // Spectrogram(int DATAPOINTS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
-  s = new Spectrogram(32, 10, 0, 9, 4, 8, width*0 - 20, -20, true);
-  s2 = new Spectrogram(32, 10, 0, 9, 4, 8, width*0.5 - 20, -20, false);
+  s = new Spectrogram(32, 10, 0, 9, 4, width*0.0125, width*0-(width*0.035), -20, true);
+  s2 = new Spectrogram(32, 10, 0, 9, 4, width*0.0125, width*0.5-(width*0.035), -20, false);
 
   //Set DeBug to False for Gabe FrameRate Test
   g.debugMode = false;
@@ -62,12 +63,19 @@ void setup() {
 }
 
 void draw() {
-  image(backgroundImg, 0, 0, width, height);
+  pushStyle();
+    tint(255,5);
+    image(backgroundImg, 0, 0, width, height);
+  popStyle();
 
   if(g.debugMode == false){
     //background(#210e25);
     colorMode(RGB,100);
-    fill(red(#210e25),green(#210e25),blue(#210e25),80);
+    if(handsTouching){
+      fill(color(red(#000606),green(#000606),blue(#000606),15));
+    } else {
+      fill(color(red(#210e25),green(#210e25),blue(#210e25),35));
+    }
     noStroke();
     rect(0,0,width,height);
   } else {
@@ -113,6 +121,26 @@ void draw() {
   for(Point pt : rightPoints){
     pt.render();
   }
+
+  if(handsTouching){
+    pushStyle();
+
+      noFill();
+      strokeWeight(0.5);
+      stroke(color(255,0,255,10));
+      for(int i = 0; i < width; i += (width*0.1)){
+        beginShape(TRIANGLE_STRIP);
+        for(int j = 0; j <= height; j += (height*0.1)){
+          vertex(i - (height*0.05) * sin(millis()*0.001) ,j + (height*0.05) * cos(millis()*0.001));
+          vertex(i + (width*0.1) + (height*0.05) * cos(millis()*0.001), j);
+        }
+        endShape();
+      }
+    popStyle();
+  }
+
+
+
   prune();
 
   // fill(color(#FFFFFF));

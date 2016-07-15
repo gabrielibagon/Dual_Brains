@@ -82,8 +82,8 @@ int direction = 1;
                 color c = color(0, 0, 0, sq(map(j, 1, numOfReadingsStored, 9,1)));
                 stroke(c);
                 strokeWeight(55*(channels-i)/channels);
-                curveVertex(-10 + scale * (j-1) ,
-                    (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * (i+0.5) * 15));
+                curveVertex(-width/64 + scale * (j-1) ,
+                    (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * (i+0.5) * height*0.03));
                 // line(-10 + scale * (j-1) ,
                 //     (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * i * 15) ,
                 //     scale * j,
@@ -110,7 +110,7 @@ int direction = 1;
               stroke(c);
               float baseWave = sin(TWO_PI * j/numOfReadingsStored) * cos(millis()*0.0001);
               curveVertex(scale * (j-1),
-                          (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (scale * sq(i)/2) + (baseWave * (i+0.5) * 10) + map(data[i][j-1], upperLim, lowerLim, 4 * scale, -4 * scale));
+                          (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (scale * sq(i)/2) + (baseWave * (i+0.5) * width/64) + map(data[i][j-1], upperLim, lowerLim, 4 * scale, -4 * scale));
             }
             endShape();
           }
@@ -123,7 +123,7 @@ int direction = 1;
               stroke(color(255,255,255,100*(numOfReadingsStored-j)/numOfReadingsStored));
               float baseWave = sin(TWO_PI * j/numOfReadingsStored) * cos(millis()*0.0001);
               curveVertex(scale * (j-1),
-                          (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * (i+0.5) * 10) + (scale * sq(i)/2) + map(data[i][j-1], upperLim, lowerLim, 4 * scale, -4 * scale));
+                          (-1 * numOfReadingsStored * scale) / (channels+1) * (i+1) + (baseWave * (i+0.5) * width/64) + (scale * sq(i)/2) + map(data[i][j-1], upperLim, lowerLim, 4 * scale, -4 * scale));
             }
             endShape();
           }
