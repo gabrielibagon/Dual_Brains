@@ -77,8 +77,7 @@ class Spectrogram extends Graph {
                             blue(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
                             alpha*0.5);
             //fill(c);
-            strokeWeight(0.5);
-            stroke(c);
+            noStroke();
             fill(c);
             float displacement = scale * 5 * cos(PI * (numOfReadingsStored-j)/numOfReadingsStored);
             vertex( displacement + widthScale * i + 3 * cos(millis()*0.0001), scale * j + 3 * cos(millis()*0.001));
@@ -116,8 +115,7 @@ class Spectrogram extends Graph {
                             blue(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
                             alpha*0.5);
             //fill(c);
-            strokeWeight(0.5);
-            stroke(c);
+            noStroke();
             fill(c);
 
             float displacement = scale * -5 * cos(PI * (numOfReadingsStored-j)/numOfReadingsStored);

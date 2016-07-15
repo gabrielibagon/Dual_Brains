@@ -15,70 +15,73 @@ class Point {
   //Add sprite;
   Point(float locx, float locy, float sizeX, float sizeY, float speed, boolean driftsLeft){
     this.loc = new PVector(locx, locy);
-    this.tLoc = new PVector(width*0.5, locy);
+    if(driftsLeft){
+      this.tLoc = new PVector(-0.1*width, locy * sq((height-locy)/height));
+    } else {
+      this.tLoc = new PVector(1.1*width, locy * sq((height-locy)/height));
+    }
     this.sizeX = sizeX;
     this.sizeY = sizeY;
     this.speed = speed;
     this.driftsLeft = driftsLeft;
-    this.opac = 255;
-    this.c = color(255,255,255, 40);
+    this.opac = 0;
     this.alive = true;
-    //this.render();
   }
 
   void move(){
     loc.x = lerp(loc.x, tLoc.x, speed);
-    tLoc.y = tLoc.y + random(-5,5);
+    tLoc.y = tLoc.y + random(-5,5) + 5 * cos(millis()*0.1);
     loc.y = lerp(loc.y, tLoc.y, speed);
     //lerp for left drifters
-    if(driftsLeft && loc.x > width*0.2){
+    if(driftsLeft && loc.x > -0.1*width){
       sizeX = lerp(sizeX, 4, 0.03);
-      sizeY = lerp(sizeY, 4, 0.06);
+      sizeY = lerp(sizeY, 4, 0.03);
     }
-    if(driftsLeft && loc.x > width*0.45){
-      c = lerpColor(c, color(0,0,0,0), .01);
-      opac = lerp(opac, 0, 0.01);
+    if(driftsLeft && loc.x > -0.1*width){
+      //c = lerpColor(c, color(255,255,255,0), 10);
+      opac = lerp(opac, 90, 0.05);
     }
 
     //lerp for right drifters
-    if(!driftsLeft && loc.x < width*0.8){
+    if(!driftsLeft && loc.x < width*1.1){
       sizeX = lerp(sizeX, 4, 0.03);
-      sizeY = lerp(sizeY, 4, 0.06);
+      sizeY = lerp(sizeY, 4, 0.03);
     }
-    if(!driftsLeft && loc.x < width*0.55){
-      c = lerpColor(c, color(0,0,0,0), .01);
-      opac = lerp(opac, 0, 0.01);
+    if(!driftsLeft && loc.x < width*1.1){
+      //c = lerpColor(c, color(0,0,0,0.001), .01);
+      opac = lerp(opac, 90, 0.05);
     }
 
-    if(driftsLeft && loc.x > width*0.48){
+    if(driftsLeft && loc.x < -0.1*width){
       alive = false;
     }
 
-    if(!driftsLeft && loc.x < width*0.52){
+    if(!driftsLeft && loc.x > width*1.1){
       alive = false;
     }
   }
 
   void show(){
-    noStroke();
-    colorMode(RGB, 100);
-    fill(c);
-    //ellipse(this.loc.x, this.loc.y, sizeX, sizeY);
+
     //println("Drawing to " + loc.x + ", " + loc.y);
     pushMatrix();
-    translate(this.loc.x, this.loc.y);
-    rotate(random(0,PI*0.1));
-    //tint(opac);
-    //blendMode(ADD);
-    imageMode(CENTER);
-    //image(sprt, 0, 0, sizeX, sizeY);
-    //image(sprt2, 0, 0, sizeX, sizeY);
-    strokeCap(PROJECT);
-    strokeWeight(60);
-    colorMode(ARGB, 255,255,255,100);
-    stroke(color(255,255,255,5*random(0,1)));
-    line(-5,0,5,0);
-    //image(sprt, this.loc.x, this.loc.y, sizeX, sizeY);
+      translate(this.loc.x, this.loc.y, 10);
+      rotate(random(0,PI*0.05));
+      noStroke();
+
+      color temp = color(230,230,250,opac*0.1);
+      fill(temp);
+      ellipse(5 * cos(millis()*0.005), 0, sizeX, sizeY);
+
+      temp = color(230,230,250,opac*0.1);
+      fill(temp);
+      ellipse(3 * cos(millis()*0.005), 0, sizeX*0.8, sizeY*0.8);
+
+      temp = color(255,255,255,opac);
+      fill(temp);
+      ellipse(0, 3 * cos(millis()*0.005), sizeX*0.05, sizeY*0.05);
+
+
     popMatrix();
   }
 
