@@ -16,9 +16,9 @@ class Point {
   Point(float locx, float locy, float sizeX, float sizeY, float speed, boolean driftsLeft){
     this.loc = new PVector(locx, locy);
     if(driftsLeft){
-      this.tLoc = new PVector(-0.1*width, locy * sq((height-locy)/height));
+      this.tLoc = new PVector(-0.1*width, -locy*(locy/height));
     } else {
-      this.tLoc = new PVector(1.1*width, locy * sq((height-locy)/height));
+      this.tLoc = new PVector(1.1*width,-locy*(locy/height));
     }
     this.sizeX = sizeX;
     this.sizeY = sizeY;
@@ -30,8 +30,8 @@ class Point {
 
   void move(){
     loc.x = lerp(loc.x, tLoc.x, speed);
-    tLoc.y = tLoc.y + random(-5,5) + 5 * cos(millis()*0.1);
-    loc.y = lerp(loc.y, tLoc.y, speed);
+    //tLoc.y = tLoc.y + random(-5,5) + 5 * cos(millis()*0.1);
+    loc.y = lerp(loc.y, tLoc.y, abs(loc.y-tLoc.y)*0.001*speed);
     //lerp for left drifters
     if(driftsLeft && loc.x > -0.1*width){
       sizeX = lerp(sizeX, 4, 0.03);

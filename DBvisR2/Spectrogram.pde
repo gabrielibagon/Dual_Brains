@@ -49,7 +49,7 @@ class Spectrogram extends Graph {
       //-----------------------
       if(screenLeft){ //IF ON SCREEN RIGHT
         pushMatrix();
-        translate(origin.x, origin.y);
+        translate(origin.x, origin.y,5);
         colorMode(RGB, 255,255,255,100);
         noStroke();
         //Swatch from Mockup
@@ -72,9 +72,9 @@ class Spectrogram extends Graph {
             colorCode = constrain(colorCode, 0, 7);
 
             //Add alpha value to swatch color
-            color c = color(red(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
-                            green(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
-                            blue(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
+            color c = color(red(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored*2,
+                            green(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored*2,
+                            blue(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored*2,
                             alpha*0.5);
             //fill(c);
             noStroke();
@@ -87,7 +87,7 @@ class Spectrogram extends Graph {
         endShape(CLOSE);
       } else { //IF ON SCREEN RIGHT
         pushMatrix();
-        translate(origin.x, origin.y);
+        translate(origin.x, origin.y,5);
         colorMode(RGB, 255,255,255,100);
         noStroke();
         //Swatch from Mockup
@@ -110,9 +110,9 @@ class Spectrogram extends Graph {
             colorCode = constrain(colorCode, 0, 7);
 
             //Add alpha value to swatch color
-            color c = color(red(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
-                            green(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
-                            blue(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored,
+            color c = color(red(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored * 2,
+                            green(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored * 2,
+                            blue(swatch[colorCode]) * (numOfReadingsStored-j)/numOfReadingsStored * 2,
                             alpha*0.5);
             //fill(c);
             noStroke();
