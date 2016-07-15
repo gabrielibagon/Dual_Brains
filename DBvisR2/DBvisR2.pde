@@ -22,13 +22,13 @@ void setup() {
   //Test Graph
   //Graph(float SAMPLE_RATE, int TIME_WINDOW, float SCALE, int ORIGIN_X, int ORIGIN_Y){
   //LineGraph(int CHANNELS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y,  boolean IS_ON_LEFT){
-  g = new LineGraph(6, 250, -250, 20, 9, 2, width*0, height*1.1, true);
-  g2 = new LineGraph(6, 250, -250, 20, 9, 2, width, height*1.1, false);
+  g = new LineGraph(6, 250, -250, 20, 9, 2, width*0 - 20, height*1.05, true);
+  g2 = new LineGraph(6, 250, -250, 20, 9, 2, width*0.5 - 20, height*1.05, false);
 
   //Spectrogram graph
   // Spectrogram(int DATAPOINTS, float UPPER_LIM, float LOWER_LIM, float SAMPLE_RATE, int TIME_WINDOW, float SCALE, float ORIGIN_X, float ORIGIN_Y) {
-  s = new Spectrogram(32, 10, 0, 9, 4, 2.2, width*0, -20, true);
-  s2 = new Spectrogram(32, 10, 0, 9, 4, 2.2, width*0.5, -20, false);
+  s = new Spectrogram(32, 10, 0, 9, 4, 8, width*0 - 20, -20, true);
+  s2 = new Spectrogram(32, 10, 0, 9, 4, 8, width*0.5 - 20, -20, false);
 
   //Set DeBug to False for Gabe FrameRate Test
   g.debugMode = false;
@@ -75,22 +75,25 @@ void draw() {
 
   float[] newData = {random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250), random(-250, 250)};
 
-  g.update(subj1_eeg);
-  g2.update(subj2_eeg);
+  g.update(newData);
+  g2.update(newData);
 
   g.render();
   g2.render();
 
-  s.update(subj1_fft);
-  s2.update(subj2_fft);
+  s.update(newData2);
+  s2.update(newData2);
 
   s.render();
   s2.render();
   tint(255,255);
   //image(mask, 0, 0, width, height);
 
-  fill(color(#FFFFFF));
-  text(frameRate, 20, 20);
+  //DRAW USER 2 DATA
+
+  // fill(color(#FFFFFF));
+  // text(frameRate, 20, 20);
+
 }
 
 void mousePressed(){
