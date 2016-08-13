@@ -13,13 +13,13 @@ class Filters:
 		self.fs_Hz = 250
 		self.fn = self.fs_Hz/2
 		self.filter_window = 256
-		self.data_buff = deque([])
+		self.data_buff = deque([[0]*16]*self.filter_window)
 		self.filtered_data = []
 
 		fs = self.fs_Hz
 		fn = self.fn
 		filter_order = 2   #2nd order filter
-		f_high = 13
+		f_high = 40
 		f_low = 2
 		wn = [59,61]       #Nyquist filter window
 		self.low_pass_coefficients = signal.butter(filter_order,f_high/fn, 'low')
@@ -27,20 +27,18 @@ class Filters:
 		self.notch_coefficients = signal.butter(4,[x/fn for x in wn], 'stop')
 		self.filtered_eeg = np.empty([16,256])
 
+	def collect_data(self,sample):
+		self.data_buff.popleft()
+		self.data_buff.append(sample)
+		# print(self.data_buff)
 
-	def filter_data(self,sample):
-		# print("SAMPLE",sample);
-		if len(self.data_buff) < 256:
-			self.data_buff.append(sample)
-		else:
-			self.data_buff.popleft()
-			self.data_buff.append(sample)
-			data = self.data_buff
-			data = np.asarray(data).T
-			data = data.astype(np.float)
-			filtered_eeg = self.noise_filters(data)
-			fft = self.fft_filter(data)
-			return [filtered_eeg, fft]
+	def filter_data(self):
+		data = self.data_buff
+		data = np.asarray(data).T
+		data = data.astype(np.float)
+		filtered_eeg = self.noise_filters(data)
+		fft = self.fft_filter(data)
+		return [filtered_eeg, fft]
 
 	def noise_filters(self,data):
 		[b1, a1] = [self.high_pass_coefficients[0],self.high_pass_coefficients[1]]
@@ -52,6 +50,7 @@ class Filters:
 		high_passed = []
 		low_passed = []
 		# print(range(len(data)))
+		# print(data)
 		for i in range(len(data)-1):
 		  channel =  data[i]
 		  high_passed = signal.filtfilt(b1,a1,channel);        # high pass filter

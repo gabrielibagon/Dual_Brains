@@ -11,6 +11,8 @@ from collections import deque
 class Data_Buffer():
 
 	def __init__(self):
+		global udp
+		self.udp = udp
 		self.filt = filters.Filters()
 		self.count = 0
 		self.udp_array = []
@@ -20,25 +22,30 @@ class Data_Buffer():
 
 
 	def buffer(self,sample):
-		if (self.count%8==0):
-			EEG = self.filt.filter_data(sample.channel_data)
-			if EEG is not None:
-				uv = EEG[0]
-				fft = EEG[1]
-				fft1 = fft[0,10:42]
-				fft2 = fft[9,10:42]
-				for chan in uv:
-					udp_array.append(chan[0])
-				for pt in fft1:
-					udp_array.append(pt)
-				for pt in fft2:
-					udp_array.append(pt)
-				print(np.shape(send))
-				print(send)
-				if (count>5000) and self.HAND_HOLDING == 0:
-					HAND_HOLDING = self.hand_holding_detect(uv)
-				udp_array.append(HAND_HOLDING)
-				udp.receive(send)
+		print(self.count)
+		self.filt.collect_data(sample.channel_data)
+		print(len(self.filt.data_buff[0]))
+		# print(self.filt.data_buff)
+		if (self.count%8==0 and self.count>256):
+			EEG = self.filt.filter_data()
+			uv = EEG[0]
+			fft = EEG[1]
+			fft1 = fft[0,10:42]
+			fft2 = fft[9,10:42]
+			uv = self.normalize(uv)
+			for chan in uv:
+				self.udp_array.append(chan[0])
+			for pt in fft1:
+				self.udp_array.append(pt)
+			for pt in fft2:
+				self.udp_array.append(pt)
+			# print(np.shape(send))
+			# print(send)
+			if (self.count>5000) and self.HAND_HOLDING == 0:
+				self.HAND_HOLDING = self.hand_holding_detect(uv)
+			print(self.HAND_HOLDING)
+			self.udp_array.append(self.HAND_HOLDING)
+			self.udp.receive(self.udp_array)
 		self.count+=1
 
 		# DATA FORMAT
@@ -52,28 +59,25 @@ class Data_Buffer():
 		# 16-2080: channels 0-5 and 8-13 fft data (129 points per channel)
 
 	def hand_holding_detect(self,uv):
-		# subj1_channels = uv[0,6]
-		# subj2_channels = uv[8,14]
-		# for i in range(0,7):
-		# 	subj1_mean.append(np.mean(uv[i]))
-		# for i in range(8,14):
-		# 	subj2_mean.append(np.mean(uv[i]))
-		# subj2_mean = np.mean(uv[8])
-		# gen1 = (chan1 for chan1 in subj1_mean if chan1 > np.mean_buffer[0])
-		# gen2 = (chan2 for chan2 in subj2_mean if chan2 > np.mean_buffer[1])
 		subj1_mean = np.mean(np.square(uv[0]))
-		subj2_mean = np.mean(uv[1])
 
-		if subj1_mean - np.mean(self.mean_buffer) < 50:
+		if subj1_mean - np.mean(self.mean_buffer) < -25:
 			return 1
 		else:
-			self.mean_buffer.pop()
+			self.mean_buffer.popleft()
 			self.mean_buffer.append(subj1_mean)
 			return 0
 
 
-
-		
+	def normalize(self,uv):
+		print(uv)
+		subj1_eeg = uv[0:6]
+		subj2_eeg = uv[8:14]
+		ratio = np.sqrt(np.mean(np.square(subj1_eeg)) / np.mean(np.square(subj2_eeg)))
+		new_subj2_eeg = ratio*subj2_eeg
+		for i in range(len(subj1_eeg)):
+			uv[i+8] = new_subj2_eeg[i]
+		return uv
 
 
 def main():
