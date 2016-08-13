@@ -20,5 +20,4 @@ class UDPServer():
     try:
       self.server.sendto(data.encode(),(self.ip, self.port))
     except Exception as e:
-      print(e)
-      print('sup')
+      print("COULD NOT SEND")

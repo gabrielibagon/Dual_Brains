@@ -155,9 +155,9 @@ void mousePressed(){
   s2.debugMode = !s2.debugMode;
 }
 
-void keyPressed(){
-  handsTouching = !handsTouching;
-}
+// void keyPressed(){
+//   handsTouching = !handsTouching;
+// }
 
 
 void spawnLeft(float[] heart, float lowerLim, float upperLim){
@@ -234,5 +234,8 @@ void receive(byte[] received_data) {
   }
   for (int i=0;i<32;i++){
     subj2_fft[i] = Float.parseFloat(items[i+48]);
+  }
+  if (Float.parseFloat(items[items.length-1]) == 1){
+    handsTouching = true;
   }
 }

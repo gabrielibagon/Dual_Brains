@@ -10,7 +10,7 @@ class Filters:
 	def __init__(self):
 		np.set_printoptions(threshold=np.nan)
 
-		self.fs_Hz = 125
+		self.fs_Hz = 250
 		self.fn = self.fs_Hz/2
 		self.filter_window = 256
 		self.data_buff = deque([])
