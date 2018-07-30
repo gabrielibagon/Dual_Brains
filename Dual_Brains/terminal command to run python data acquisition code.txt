@@ -1,1 +1,3 @@
 python python/data_buffer.py --serial-port /dev/tty.usbserial-DQ007RRX
+
+python python/data_buffer.py --test-file testfile.txt

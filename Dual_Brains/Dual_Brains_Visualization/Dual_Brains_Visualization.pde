@@ -13,6 +13,9 @@ String HOST_IP="127.0.0.1"; //
 UDP udp;
 boolean isReceivingData = false;
 
+//Preview
+PWindow win;
+
 // Controls
 Controls controls;
 
@@ -56,7 +59,7 @@ float curTime, lastTime, randInterval;
 float randLimit = 150;
 float rand2Limit = 10.5;
 
-
+int curOutputScreen = 1;
 
 void settings() {
   // If you have a second screen
@@ -67,6 +70,7 @@ void settings() {
 }
 
 void setup() {
+  
   frameRate(20);
   background(0);
   backgroundImg = loadImage("GradientBackground-640.jpg");
@@ -303,12 +307,16 @@ void draw() {
   isReceivingData = false;
 }
 
-//void mousePressed(){
+void mousePressed(){
+  //curOutputScreen = (curOutputScreen == 1? 2: 1);
+  //fullScreen(curOutputScreen);
+    //fullScreen(P3D, 2);
+
 //  g.debugMode = !g.debugMode;
 //  s.debugMode = !s.debugMode;
 //  g2.debugMode = !g2.debugMode;
 //  s2.debugMode = !s2.debugMode;
-//}
+}
 
 
 void spawnLeft(float[] heart, float lowerLim, float upperLim) {
