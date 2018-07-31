@@ -18,7 +18,7 @@ class Controls extends PApplet {
   }
 
   public void settings() {
-    size(200, 400, P2D);
+    size(500, 400, P2D);
     smooth();
   }
   public void setup() { 
