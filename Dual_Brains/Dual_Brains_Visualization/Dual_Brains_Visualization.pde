@@ -14,7 +14,7 @@ UDP udp;
 boolean isReceivingData = false;
 
 //Preview
-PWindow win;
+//PWindow win;
 
 // Controls
 Controls controls;
