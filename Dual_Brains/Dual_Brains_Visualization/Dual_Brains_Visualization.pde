@@ -61,6 +61,9 @@ float rand2Limit = 10.5;
 
 int curOutputScreen = 1;
 
+float adjLeftGlobalVals = 1.0;
+float adjRightGlobalVals = 1.0;
+
 void settings() {
   // If you have a second screen
   //fullScreen(P3D, 2);
@@ -374,14 +377,14 @@ void receive(byte[] received_data) {
 
   // 0-5: subj 1 eeg
   for (int i = 0; i<6; i++) {
-    subj1_eeg[i] = Float.parseFloat(items[i]);
+    subj1_eeg[i] = Float.parseFloat(items[i]) * adjLeftGlobalVals;
   }
   // 6: subj 1 ecg
   subj1_heart[0] = Float.parseFloat(items[6]);
 
   // 8-13: subj2 eeg
   for (int i =0; i<6; i++) {
-    subj2_eeg[i] = Float.parseFloat(items[i+8]);
+    subj2_eeg[i] = Float.parseFloat(items[i+8]) * adjRightGlobalVals;
   }
   // 14: subj2 ecg
   subj2_heart[0] = Float.parseFloat(items[14]);
